@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="冰冰工作生活台">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#10b981">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon-192.png">
+<link rel="icon" href="icon-192.png">
+<title>冰冰工作生活台</title>
+<style>
+:root{
+  --home-primary:#10b981;--home-light:#d1fae5;--home-soft:#ecfdf5;--home-text:#064e3b;
+  --plan-primary:#22c55e;--plan-light:#dcfce7;--plan-soft:#f0fdf4;--plan-text:#14532d;
+  --review-primary:#3b82f6;--review-light:#dbeafe;--review-soft:#eff6ff;--review-text:#1e3a8a;
+  --sport-primary:#f97316;--sport-light:#ffedd5;--sport-soft:#fff7ed;--sport-text:#7c2d12;
+  --english-primary:#8b5cf6;--english-light:#ede9fe;--english-soft:#f5f3ff;--english-text:#4c1d95;
+  --listen-primary:#06b6d4;--listen-light:#cffafe;--listen-soft:#ecfeff;--listen-text:#164e63;
+  --finance-primary:#0ea5e9;--finance-light:#e0f2fe;--finance-soft:#f0f9ff;--finance-text:#075985;
+  --news-primary:#ef4444;--news-light:#fee2e2;--news-soft:#fef2f2;--news-text:#991b1b;
+  --ai-primary:#d946ef;--ai-light:#fae8ff;--ai-soft:#fdf4ff;--ai-text:#86198f;
+  --weekly-primary:#ec4899;--weekly-light:#fce7f3;--weekly-soft:#fdf2f8;--weekly-text:#831843;
+  --bg:#f8fafc;--panel:#ffffff;--panel-2:#f1f5f9;--border:#e2e8f0;
+  --text:#0f172a;--text-dim:#64748b;--text-light:#94a3b8;
+  --shadow:0 2px 12px rgba(15,23,42,.08);--shadow-lg:0 8px 30px rgba(15,23,42,.12);
+  --radius:16px;--radius-sm:10px;
+  --safe-top:env(safe-area-inset-top,0px);--safe-bottom:env(safe-area-inset-bottom,0px);
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;background:var(--bg);color:var(--text);font-size:15px;line-height:1.55;-webkit-font-smoothing:antialiased;padding-top:var(--safe-top);padding-bottom:var(--safe-bottom);overscroll-behavior-y:none}
+::-webkit-scrollbar{width:6px;height:6px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:#cbd5e1;border-radius:4px}
+.app{display:flex;height:100vh;overflow:hidden}
+.sidebar{width:240px;flex-shrink:0;background:#fff;border-right:1px solid var(--border);display:flex;flex-direction:column;position:relative;z-index:20}
+.brand{padding:calc(16px + var(--safe-top)) 18px 14px;display:flex;align-items:center;gap:12px}
+.brand .avatar{width:42px;height:42px;border-radius:50%;object-fit:cover;border:3px solid var(--home-light);box-shadow:0 2px 8px rgba(16,185,129,.25)}
+.brand .info{flex:1;min-width:0}
+.brand .name{font-size:15px;font-weight:700;color:var(--text)}
+.brand .sub{font-size:11px;color:var(--text-dim)}
+.nav-items{flex:1;overflow-y:auto;padding:10px 14px}
+.nav-item{display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:12px;cursor:pointer;color:#475569;font-size:15px;font-weight:500;margin-bottom:8px;transition:all .18s;border:none;background:transparent;width:100%;text-align:left;position:relative}
+.nav-item:hover{background:#f1f5f9;color:#1e293b}
+.nav-item.active{background:var(--home-primary);color:#fff;box-shadow:0 4px 12px rgba(16,185,129,.35)}
+.nav-item .ic{width:26px;height:26px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px;background:#f1f5f9;transition:all .18s}
+.nav-item.active .ic{background:rgba(255,255,255,.25);color:#fff}
+.sidebar-footer{padding:12px;text-align:center;font-size:11px;color:var(--text-light)}
+.main{flex:1;display:flex;flex-direction:column;min-width:0;background:var(--bg)}
+.topbar{height:64px;background:#fff;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 22px;flex-shrink:0}
+.topbar .greet{font-size:13px;color:var(--text-dim)}
+.topbar .greet b{font-size:16px;color:var(--text);font-weight:700}
+.topbar .weather{display:flex;align-items:center;gap:10px;font-size:13px;color:var(--text-dim);background:var(--panel-2);padding:8px 14px;border-radius:50px;max-width:50%}
+.topbar .weather .w-icon{font-size:18px}
+.content{flex:1;overflow-y:auto;padding:22px;-webkit-overflow-scrolling:touch}
+.page{display:none;animation:fadeIn .25s ease}.page.active{display:block}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.home-hero{background:linear-gradient(135deg,var(--home-primary),#34d399);color:#fff;border-radius:var(--radius);padding:26px 24px;margin-bottom:22px;box-shadow:0 8px 24px rgba(16,185,129,.3)}
+.home-hero h2{font-size:22px;margin-bottom:6px}
+.home-hero p{font-size:14px;opacity:.9}
+.module-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.module-card{background:#fff;border:1px solid var(--border);border-radius:var(--radius);padding:20px;cursor:pointer;transition:all .18s;box-shadow:var(--shadow)}
+.module-card:hover{transform:translateY(-3px);box-shadow:var(--shadow-lg)}
+.module-card .top{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+.module-card .icon{width:46px;height:46px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:22px}
+.module-card .arrow{color:var(--text-light);font-size:18px}
+.module-card h3{font-size:15px;font-weight:700;margin-bottom:6px}
+.module-card .desc{font-size:12px;color:var(--text-dim);line-height:1.5}
+.module-card .badge{display:inline-block;margin-top:10px;font-size:11px;padding:3px 8px;border-radius:20px;font-weight:600}
+.page-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;flex-wrap:wrap;gap:10px}
+.page-header .left{display:flex;align-items:center;gap:12px}
+.page-header .icon{width:40px;height:40px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px}
+.page-header h2{font-size:18px;font-weight:700}
+.date-switcher{display:flex;align-items:center;gap:8px;background:#fff;border:1px solid var(--border);border-radius:50px;padding:4px}
+.date-switcher button{border:none;background:transparent;color:var(--text-dim);cursor:pointer;width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;transition:all .15s}
+.date-switcher button:hover{background:var(--panel-2)}
+.date-switcher .cur{font-size:13px;font-weight:600;color:var(--text);min-width:80px;text-align:center}
+.card{background:#fff;border:1px solid var(--border);border-radius:var(--radius);padding:18px;margin-bottom:16px;box-shadow:var(--shadow)}
+.card-title{font-size:15px;font-weight:700;margin-bottom:14px;display:flex;align-items:center;justify-content:space-between}
+.card-title .left{display:flex;align-items:center;gap:8px}
+.card-title .tag{font-size:11px;padding:3px 8px;border-radius:20px;font-weight:600}
+.btn{padding:9px 16px;border-radius:10px;border:none;background:var(--panel-2);color:var(--text);cursor:pointer;font-size:13px;font-weight:600;transition:all .15s;display:inline-flex;align-items:center;gap:6px}
+.btn:active{transform:scale(.97)}
+.btn-primary{color:#fff}
+.btn-sm{padding:6px 11px;font-size:12px}
+.input,select,textarea{width:100%;padding:10px 13px;border-radius:10px;border:1px solid var(--border);background:#fff;color:var(--text);font-size:14px;font-family:inherit;transition:border-color .15s}
+.input:focus,select:focus,textarea:focus{outline:none;border-color:var(--home-primary)}
+textarea{resize:vertical;min-height:70px}
+label{font-size:12px;color:var(--text-dim);margin-bottom:5px;display:block;font-weight:600}
+.form-row{display:grid;gap:12px;margin-bottom:12px}
+.form-row-2{grid-template-columns:1fr 1fr}
+.form-row-3{grid-template-columns:1fr 1fr 1fr}
+.form-row-4{grid-template-columns:repeat(4,1fr)}
+.check-item{display:flex;align-items:flex-start;gap:10px;padding:12px;background:var(--panel-2);border-radius:12px;margin-bottom:8px}
+.check-item.done{opacity:.6}
+.check-item.done .txt{text-decoration:line-through;color:var(--text-light)}
+.check-box{width:22px;height:22px;border-radius:7px;border:2px solid var(--border);cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:all .15s;margin-top:1px}
+.check-box.checked{background:var(--plan-primary);border-color:var(--plan-primary)}
+.check-box.checked::after{content:"✓";color:#fff;font-size:13px;font-weight:700}
+.check-item .body{flex:1;min-width:0}
+.check-item .txt{font-size:14px;word-break:break-word}
+.check-item .meta{font-size:11px;color:var(--text-dim);margin-top:3px;display:flex;gap:8px;align-items:center}
+.pri-tag{font-size:10px;padding:2px 6px;border-radius:4px;font-weight:700}
+.p-high{background:#fee2e2;color:#991b1b}.p-mid{background:#fef3c7;color:#92400e}.p-low{background:#dcfce7;color:#166534}
+.del-btn{background:none;border:none;color:var(--text-light);cursor:pointer;font-size:16px;padding:2px 6px}
+.del-btn:hover{color:#ef4444}
+.tabs{display:flex;gap:6px;margin-bottom:16px;flex-wrap:nowrap;overflow-x:auto}
+.tab{padding:8px 16px;border-radius:50px;border:1px solid var(--border);background:#fff;color:var(--text-dim);cursor:pointer;font-size:13px;font-weight:600;white-space:nowrap}
+.tab.active{color:#fff;border-color:transparent}
+.stat-row{display:grid;gap:12px;margin-bottom:16px}
+.stat-card{background:#fff;border:1px solid var(--border);border-radius:var(--radius-sm);padding:16px;text-align:center;box-shadow:var(--shadow)}
+.stat-card .num{font-size:24px;font-weight:800}
+.stat-card .lbl{font-size:12px;color:var(--text-dim);margin-top:3px}
+.empty{text-align:center;color:var(--text-dim);padding:30px 20px;font-size:13px}
+.list-item{display:flex;align-items:center;justify-content:space-between;padding:12px;background:var(--panel-2);border-radius:12px;margin-bottom:8px}
+.list-item .info{display:flex;align-items:center;gap:10px;min-width:0;flex:1}
+.list-item .cat{font-size:10px;padding:3px 8px;border-radius:20px;font-weight:700;flex-shrink:0}
+.list-item .amt{font-weight:700;font-size:14px;flex-shrink:0}
+.sport-type{background:#fff;border:1px solid var(--border);border-radius:var(--radius);padding:16px;margin-bottom:14px;box-shadow:var(--shadow)}
+.sport-type h4{display:flex;align-items:center;gap:8px;font-size:15px;margin-bottom:10px}
+.sport-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;margin-bottom:10px}
+.sport-day{text-align:center;padding:8px 2px;background:var(--panel-2);border-radius:10px;font-size:11px;cursor:pointer;transition:all .15s;border:1px solid transparent}
+.sport-day .wk{color:var(--text-dim);font-size:10px}
+.sport-day .dt{font-weight:700;margin:2px 0}
+.sport-day .dot{width:6px;height:6px;border-radius:50%;background:transparent;margin:3px auto 0}
+.sport-day.done{background:var(--sport-light);border-color:var(--sport-primary)}
+.sport-day.done .dot{background:var(--sport-primary)}
+.sport-day.today{box-shadow:0 0 0 2px var(--sport-primary) inset}
+.star-rating{display:flex;gap:4px}
+.star{width:32px;height:32px;border-radius:50%;border:1px solid var(--border);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:16px;color:var(--text-light);transition:all .15s}
+.star.filled{background:var(--english-primary);border-color:var(--english-primary);color:#fff}
+.english-card{background:var(--english-soft);border:1px solid var(--english-light);border-radius:var(--radius);padding:14px;margin-bottom:10px}
+.debt-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+.debt-card{background:#fff;border:1px solid var(--border);border-radius:var(--radius-sm);padding:14px}
+.debt-card h5{font-size:13px;margin-bottom:10px;color:var(--text-dim)}
+.debt-card .row{display:flex;justify-content:space-between;font-size:13px;margin-bottom:6px}
+.debt-card .row .val{font-weight:700}
+.weekly-auto{background:var(--weekly-soft);border:1px solid var(--weekly-light);border-radius:var(--radius);padding:14px;margin-bottom:14px}
+.weekly-auto h5{font-size:13px;margin-bottom:10px;color:var(--weekly-text)}
+.weekly-auto .item{font-size:13px;margin-bottom:6px;display:flex;justify-content:space-between}
+.resource-card{background:#fff;border:1px solid var(--border);border-radius:var(--radius);padding:16px;margin-bottom:12px;box-shadow:var(--shadow);transition:all .18s;cursor:pointer}
+.resource-card:hover{transform:translateY(-2px);box-shadow:var(--shadow-lg)}
+.resource-card .rc-top{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.resource-card .rc-badge{font-size:11px;padding:3px 8px;border-radius:20px;font-weight:700}
+.resource-card h4{font-size:15px;font-weight:700;margin-bottom:6px}
+.resource-card .rc-desc{font-size:13px;color:var(--text-dim);line-height:1.5;margin-bottom:8px}
+.resource-card .rc-link{font-size:12px;color:var(--listen-primary);text-decoration:none}
+.ai-stage{background:#fff;border:1px solid var(--border);border-radius:var(--radius);padding:18px;margin-bottom:14px;box-shadow:var(--shadow);border-left:4px solid var(--ai-primary)}
+.ai-stage .stage-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.ai-stage .stage-num{width:32px;height:32px;border-radius:50%;background:var(--ai-primary);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:14px}
+.ai-stage h3{font-size:16px;font-weight:700}
+.ai-stage .stage-time{font-size:11px;padding:3px 8px;border-radius:20px;background:var(--ai-light);color:var(--ai-text);font-weight:600}
+.ai-stage .topics{display:grid;gap:8px}
+.ai-stage .topic{display:flex;align-items:flex-start;gap:8px;font-size:13px;padding:8px 10px;background:var(--ai-soft);border-radius:8px}
+.ai-stage .topic .dot{width:6px;height:6px;border-radius:50%;background:var(--ai-primary);margin-top:6px;flex-shrink:0}
+.ai-stage .topic b{font-weight:700}
+.ai-stage .topic .tip{display:block;font-size:12px;color:var(--text-dim);margin-top:2px}
+/* 顶部汉堡按钮 */
+.menu-toggle{display:none;width:38px;height:38px;border-radius:10px;border:1px solid var(--border);background:#fff;align-items:center;justify-content:center;font-size:18px;cursor:pointer;color:var(--text)}
+/* 遮罩层 */
+.sidebar-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:90}
+.sidebar-overlay.show{display:block}
+.install-bar{position:fixed;bottom:calc(70px + var(--safe-bottom));left:12px;right:12px;background:linear-gradient(135deg,var(--home-primary),#34d399);color:#fff;padding:12px 16px;border-radius:16px;display:flex;align-items:center;gap:12px;box-shadow:0 6px 24px rgba(16,185,129,.35);z-index:200;display:none}
+.install-bar .txt{flex:1;font-size:13px}
+.install-bar .txt b{display:block;font-size:14px;margin-bottom:2px}
+.install-bar .close{width:26px;height:26px;border-radius:50%;border:none;background:rgba(255,255,255,.25);color:#fff;font-size:16px;cursor:pointer}
+.toast{position:fixed;bottom:calc(90px + var(--safe-bottom));left:50%;transform:translateX(-50%) translateY(20px);background:rgba(15,23,42,.88);color:#fff;padding:10px 18px;border-radius:50px;font-size:13px;opacity:0;transition:all .3s;z-index:1000;pointer-events:none}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+@media(max-width:900px){
+  .app{display:block}
+  .sidebar{position:fixed;left:0;top:0;bottom:0;width:280px;padding-top:var(--safe-top);transform:translateX(-100%);transition:transform .25s ease;z-index:100;border-right:none;box-shadow:8px 0 30px rgba(0,0,0,.15)}
+  .sidebar.show{transform:translateX(0)}
+  .main{height:100vh;padding-top:var(--safe-top)}
+  .menu-toggle{display:flex}
+  .content{padding:16px}
+  .module-grid{grid-template-columns:repeat(2,1fr)}
+  .install-bar{bottom:calc(20px + var(--safe-bottom));left:14px;right:14px}
+  .toast{bottom:calc(40px + var(--safe-bottom))}
+}
+@media(max-width:600px){
+  .sidebar{width:260px}
+  .module-grid{grid-template-columns:1fr}
+  .form-row-2,.form-row-3,.form-row-4{grid-template-columns:1fr}
+  .debt-grid{grid-template-columns:1fr}
+  .topbar{padding:0 14px}
+  .topbar .greet b{font-size:14px}
+  .topbar .weather{font-size:12px;padding:6px 10px;max-width:45%}
+}
+</style>
+</head>
+<body>
+<div class="app">
+  <aside class="sidebar">
+    <div class="brand">
+      <img src="icon-192.png" class="avatar" alt="冰冰">
+      <div class="info"><div class="name">冰冰工作生活台</div><div class="sub">销售成长 · 生活管理</div></div>
+    </div>
+    <nav class="nav-items" id="navItems"></nav>
+    <div class="sidebar-footer">数据本地保存 · 定期备份</div>
+  </aside>
+  <main class="main">
+    <header class="topbar">
+      <div style="display:flex;align-items:center;gap:10px">
+        <button class="menu-toggle" id="menuToggle" onclick="toggleSidebar()">☰</button>
+        <div class="greet">早安，冰冰 👋<br><b id="topDate">--</b></div>
+      </div>
+      <div class="weather" id="weatherBox"><span class="w-icon">🌤</span><span id="weatherText">定位中...</span></div>
+    </header>
+    <div class="content" id="content"></div>
+  </main>
+  <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+  <div class="install-bar" id="installBar"><div class="txt"><b>安装「冰冰工作生活台」到主屏幕</b>像 App 一样使用，离线也能打开</div><button class="close" onclick="dismissInstall()">×</button></div>
+  <div class="toast" id="toast"></div>
+</div>
+<script>
+/* ===== 工具函数 ===== */
+const $=id=>document.getElementById(id);
+const KEY='bing_hub_v3';
+const todayStr=()=>{const d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');};
+const fmtDate=d=>(d.getMonth()+1)+'月'+d.getDate()+'日';
+const fmtFull=d=>d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+const weekKey=(d=new Date())=>{const x=new Date(d);x.setHours(0,0,0,0);const day=(x.getDay()+6)%7;x.setDate(x.getDate()-day);return fmtFull(x);};
+const weekKeyOfDate=ds=>weekKey(new Date(ds));
+const addDays=(ds,n)=>{const d=new Date(ds);d.setDate(d.getDate()+n);return fmtFull(d);};
+const loadData=()=>{try{return JSON.parse(localStorage.getItem(KEY))||{}}catch{return{}}};
+const saveData=()=>localStorage.setItem(KEY,JSON.stringify(data));
+const esc=s=>String(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+function toast(msg){const t=$('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),1800);}
+const WD=['周一','周二','周三','周四','周五','周六','周日'];
+const WKNAME=['周日','周一','周二','周三','周四','周五','周六'];
+
+/* ===== 数据初始化 ===== */
+let data=loadData();
+['plan_daily','plan_work','reviews','sports','english','txs','weekly','debts','assets','fixedExp'].forEach(k=>{if(!data[k])data[k]={};});
+if(!data.fixedExpTpl){data.fixedExpTpl=[{name:'房租',amount:3000,dueDay:1},{name:'水电',amount:300,dueDay:5},{name:'保险',amount:500,dueDay:10},{name:'交通',amount:400,dueDay:15}];}
+if(!data.debts['招商']){data.debts={'招商':{total:0,remaining:0,dueDay:9},'中国银行':{total:0,remaining:0,dueDay:15},'借呗':{total:0,remaining:0,dueDay:20},'花呗':{total:0,remaining:0,dueDay:9},'工行信用卡':{total:0,remaining:0,dueDay:25}};}
+saveData();
+let currentDate={plan:todayStr(),review:todayStr(),english:todayStr(),finance:todayStr()};
+let currentSportWeek=weekKey();
+let currentWeeklyWeek=weekKey();
+let currentEnStar=0;
+
+/* ===== 模块配置 ===== */
+const MODULES=[
+  {key:'home',icon:'🏠',name:'工作台首页',color:'#10b981'},
+  {key:'plan',icon:'📋',name:'每日计划',color:'#22c55e',desc:'今日日常待办与工作待办，分优先级管理',badge:'开启新的一天',light:'#dcfce7',soft:'#f0fdf4',text:'#14532d'},
+  {key:'review',icon:'📝',name:'当日工作复盘',color:'#3b82f6',desc:'记录客户沟通、需求、反馈与成长',badge:'沉淀销售经验',light:'#dbeafe',soft:'#eff6ff',text:'#1e3a8a'},
+  {key:'sport',icon:'🏃',name:'当周运动情况',color:'#f97316',desc:'健身、游泳、跳舞、其他运动打卡',badge:'保持活力',light:'#ffedd5',soft:'#fff7ed',text:'#7c2d12'},
+  {key:'english',icon:'🔤',name:'学习英语情况',color:'#8b5cf6',desc:'碎片化学习记录，形式时长与星级自评',badge:'日积月累',light:'#ede9fe',soft:'#f5f3ff',text:'#4c1d95'},
+  {key:'enlistening',icon:'🎧',name:'每日英语听力',color:'#06b6d4',desc:'每天推荐一篇英语听力 + 一组词汇',badge:'磨耳朵',light:'#cffafe',soft:'#ecfeff',text:'#164e63'},
+  {key:'finance',icon:'💰',name:'经济情况',color:'#0ea5e9',desc:'每日收支、月度汇总与负债管理',badge:'财务透明',light:'#e0f2fe',soft:'#f0f9ff',text:'#075985'},
+  {key:'financeNews',icon:'📈',name:'每日财经计划',color:'#ef4444',desc:'每天推荐两篇财经新闻，紧跟市场',badge:'洞察市场',light:'#fee2e2',soft:'#fef2f2',text:'#991b1b'},
+  {key:'ailearn',icon:'🤖',name:'AI学习计划',color:'#d946ef',desc:'分阶段AI学习路径，利用空余时间',badge:'拥抱未来',light:'#fae8ff',soft:'#fdf4ff',text:'#86198f'},
+  {key:'weekly',icon:'📅',name:'每周复盘',color:'#ec4899',desc:'一周工作、学习、运动、财务总回顾',badge:'看见进步',light:'#fce7f3',soft:'#fdf2f8',text:'#831843'},
+];
+
+/* ===== 导航 ===== */
+function renderNav(){
+  $('navItems').innerHTML=MODULES.map(m=>'<button class="nav-item'+(m.key==='home'?' active':'')+'" data-page="'+m.key+'"><span class="ic">'+m.icon+'</span>'+m.name+'</button>').join('');
+  document.querySelectorAll('.nav-item').forEach(n=>{
+    n.onclick=()=>{goPage(n.dataset.page);if(window.innerWidth<=900)toggleSidebar();};
+  });
+}
+function toggleSidebar(){document.querySelector('.sidebar').classList.toggle('show');$('sidebarOverlay').classList.toggle('show');}
+
+function goPage(page){
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  document.querySelectorAll('[data-page="'+page+'"]').forEach(n=>n.classList.add('active'));
+  $('content').scrollTop=0;
+  $('content').innerHTML=renderPage(page);
+  const initMap={plan:initPlan,review:initReview,sport:initSport,english:initEnglish,enlistening:initListening,finance:initFinance,financeNews:initFinanceNews,ailearn:initAILearn,weekly:initWeekly};
+  if(initMap[page])initMap[page]();
+  setTimeout(()=>{const m=MODULES.find(x=>x.key===page);if(m)document.querySelectorAll('.tab.active').forEach(t=>{t.style.background=m.color;t.style.color='#fff';});},50);
+}
+
+function renderPage(page){
+  if(page==='home')return renderHome();
+  if(page==='plan')return renderPlanPage();
+  if(page==='review')return renderReviewPage();
+  if(page==='sport')return renderSportPage();
+  if(page==='english')return renderEnglishPage();
+  if(page==='enlistening')return renderListeningPage();
+  if(page==='finance')return renderFinancePage();
+  if(page==='financeNews')return renderFinanceNewsPage();
+  if(page==='ailearn')return renderAILearnPage();
+  if(page==='weekly')return renderWeeklyPage();
+  return '';
+}
+
+/* ===== 首页 ===== */
+function renderHome(){
+  const cards=MODULES.filter(m=>m.key!=='home').map(m=>'<div class="module-card" onclick="goPage(\''+m.key+'\')"><div class="top"><div class="icon" style="background:'+m.light+'">'+m.icon+'</div><span class="arrow">›</span></div><h3 style="color:'+m.color+'">'+m.name+'</h3><div class="desc">'+m.desc+'</div><span class="badge" style="background:'+m.light+';color:'+m.text+'">'+m.badge+'</span></div>').join('');
+  return '<div class="home-hero"><h2>今天也是充满能量的日子 ✨</h2><p>清晰计划，专注执行，每天进步一点点。</p></div><div class="module-grid">'+cards+'</div>';
+}
+
+/* ===== 每日计划 ===== */
+function renderPlanPage(){
+  return '<div class="page-header"><div class="left"><div class="icon" style="background:var(--plan-light)">📋</div><h2 style="color:var(--plan-primary)">每日计划</h2></div><div class="date-switcher"><button onclick="changeDate(\'plan\',-1)">‹</button><span class="cur" id="planDateLabel">--</span><button onclick="changeDate(\'plan\',1)">›</button></div></div>'+
+  '<div class="tabs"><button class="tab active" onclick="switchPlanTab(\'daily\')" id="tab-daily">☀️ 日常待办</button><button class="tab" onclick="switchPlanTab(\'work\')" id="tab-work">💼 工作待办</button></div>'+
+  '<div class="card" id="dailyPanel"><div class="card-title"><div class="left">☀️ 日常待办</div><button class="btn" style="background:var(--plan-primary);color:#fff" onclick="openAdd(\'daily\')">+ 添加</button></div><div id="dailyForm" style="display:none;margin-bottom:14px"><div class="form-row form-row-2"><div><label>待办事项</label><input class="input" id="dailyInput" placeholder="例如：喝水、整理桌面..."></div><div style="display:flex;align-items:flex-end;gap:8px"><button class="btn" style="background:var(--plan-primary);color:#fff" onclick="addTodo(\'daily\')">保存</button><button class="btn" onclick="closeAdd(\'daily\')">取消</button></div></div></div><div id="dailyList"></div></div>'+
+  '<div class="card" id="workPanel" style="display:none"><div class="card-title"><div class="left">💼 工作待办</div><button class="btn" style="background:var(--plan-primary);color:#fff" onclick="openAdd(\'work\')">+ 添加</button></div><div id="workForm" style="display:none;margin-bottom:14px"><div class="form-row form-row-3"><div><label>工作事项</label><input class="input" id="workInput" placeholder="例如：拜访王总"></div><div><label>优先级</label><select id="workPriority"><option value="high">高 🔴</option><option value="mid" selected>中 🟡</option><option value="low">低 🟢</option></select></div><div style="display:flex;align-items:flex-end;gap:8px"><button class="btn" style="background:var(--plan-primary);color:#fff" onclick="addTodo(\'work\')">保存</button><button class="btn" onclick="closeAdd(\'work\')">取消</button></div></div></div><div id="workList"></div></div>'+
+  '<div class="card" style="background:var(--plan-soft);border-color:var(--plan-light)"><div class="card-title"><div class="left">📊 今日进度</div></div><div class="stat-row" style="grid-template-columns:repeat(4,1fr)"><div class="stat-card"><div class="num" style="color:var(--plan-primary)" id="planTotal">0</div><div class="lbl">总任务</div></div><div class="stat-card"><div class="num" style="color:var(--plan-primary)" id="planDone">0</div><div class="lbl">已完成</div></div><div class="stat-card"><div class="num" style="color:var(--plan-primary)" id="planPending">0</div><div class="lbl">待完成</div></div><div class="stat-card"><div class="num" style="color:var(--plan-primary)" id="planRate">0%</div><div class="lbl">完成率</div></div></div></div>'+
+  '<div class="card" style="text-align:center;background:var(--review-soft);border-color:var(--review-light)"><p style="font-size:13px;color:var(--text-dim);margin-bottom:12px">一天结束，快速沉淀今日工作收获？</p><button class="btn" style="background:var(--review-primary);color:#fff" onclick="goPage(\'review\')">📝 去写当日工作复盘</button></div>';
+}
+function initPlan(){renderPlan();switchPlanTab('daily');}
+function changeDate(page,delta){currentDate[page]=addDays(currentDate[page],delta);if(page==='plan')renderPlan();if(page==='review')loadReview();if(page==='english')renderEnglish();if(page==='finance')renderFinance();}
+function renderPlan(){const d=currentDate.plan;const dt=new Date(d);const wk=WKNAME[dt.getDay()];$('planDateLabel').textContent=d===todayStr()?'今日':(fmtDate(dt)+' '+wk);renderTodoList('daily');renderTodoList('work');updatePlanStats();}
+function switchPlanTab(tab){$('tab-daily').classList.toggle('active',tab==='daily');$('tab-work').classList.toggle('active',tab==='work');$('tab-daily').style.background=tab==='daily'?'var(--plan-primary)':'#fff';$('tab-daily').style.color=tab==='daily'?'#fff':'';$('tab-work').style.background=tab==='work'?'var(--plan-primary)':'#fff';$('tab-work').style.color=tab==='work'?'#fff':'';$('dailyPanel').style.display=tab==='daily'?'block':'none';$('workPanel').style.display=tab==='work'?'block':'none';}
+function openAdd(type){$(type+'Form').style.display='block';$(type+'Input').focus();}
+function closeAdd(type){$(type+'Form').style.display='none';$(type+'Input').value='';}
+function addTodo(type){const text=$(type+'Input').value.trim();if(!text){toast('请输入内容');return;}const key=type==='daily'?'plan_daily':'plan_work';const d=currentDate.plan;if(!data[key][d])data[key][d]=[];const item={id:Date.now()+Math.random(),text,done:false};if(type==='work')item.priority=$('workPriority').value;data[key][d].push(item);saveData();closeAdd(type);renderPlan();toast('已添加 ✓');}
+function toggleTodo(type,date,id){const key=type==='daily'?'plan_daily':'plan_work';const list=data[key][date];if(!list)return;const t=list.find(x=>x.id===id);if(t){t.done=!t.done;saveData();renderPlan();}}
+function delTodo(type,date,id){if(!confirm('删除这条？'))return;const key=type==='daily'?'plan_daily':'plan_work';data[key][date]=(data[key][date]||[]).filter(x=>x.id!==id);saveData();renderPlan();toast('已删除');}
+function renderTodoList(type){const key=type==='daily'?'plan_daily':'plan_work';const d=currentDate.plan;const list=data[key][d]||[];const wrap=$(type+'List');if(!list.length){wrap.innerHTML='<div class="empty">还没有任务，点击上方添加 🌟</div>';return;}const pName={high:'高',mid:'中',low:'低'},pE={high:'🔴',mid:'🟡',low:'🟢'};wrap.innerHTML=list.map(t=>'<div class="check-item'+(t.done?' done':'')+'"><div class="check-box'+(t.done?' checked':'')+'" onclick="toggleTodo(\''+type+'\',\''+d+'\','+t.id+')"></div><div class="body"><div class="txt">'+esc(t.text)+'</div>'+(type==='work'?'<div class="meta"><span class="pri-tag p-'+t.priority+'">'+pE[t.priority]+' '+pName[t.priority]+'</span></div>':'')+'</div><button class="del-btn" onclick="delTodo(\''+type+'\',\''+d+'\','+t.id+')">✕</button></div>').join('');}
+function updatePlanStats(){const d=currentDate.plan;const all=[...(data.plan_daily[d]||[]),...(data.plan_work[d]||[])];const total=all.length,done=all.filter(x=>x.done).length;$('planTotal').textContent=total;$('planDone').textContent=done;$('planPending').textContent=total-done;$('planRate').textContent=total?Math.round(done/total*100)+'%':'0%';}
+
+/* ===== 当日工作复盘 ===== */
+function renderReviewPage(){
+  return '<div class="page-header"><div class="left"><div class="icon" style="background:var(--review-light)">📝</div><h2 style="color:var(--review-primary)">当日工作复盘</h2></div><div class="date-switcher"><button onclick="changeDate(\'review\',-1)">‹</button><span class="cur" id="reviewDateLabel">--</span><button onclick="changeDate(\'review\',1)">›</button></div></div>'+
+  '<div class="card"><div class="card-title"><div class="left">💼 今日工作情况</div></div><textarea id="rev_work" placeholder="今天主要做了哪些工作？拜访、电话、会议、合同跟进..."></textarea></div>'+
+  '<div class="card"><div class="card-title"><div class="left">🗣️ 客户沟通情况</div></div><textarea id="rev_communication" placeholder="今天和哪些客户沟通了？沟通了什么内容？"></textarea></div>'+
+  '<div class="card"><div class="card-title"><div class="left">🎯 客户需求想要解决什么</div></div><textarea id="rev_needs" placeholder="客户的核心需求是什么？他们想解决什么问题？"></textarea></div>'+
+  '<div class="card"><div class="card-title"><div class="left">💬 客户反馈</div></div><textarea id="rev_feedback" placeholder="客户对产品/方案/服务有什么反馈？满意点或顾虑？"></textarea></div>'+
+  '<div class="card"><div class="card-title"><div class="left">🌟 今日最大收获与不足</div></div><textarea id="rev_gain" placeholder="今天学到了什么？哪里可以做得更好？"></textarea></div>'+
+  '<button class="btn" style="background:var(--review-primary);color:#fff;margin-bottom:14px" onclick="saveReview()">💾 保存今日复盘</button><button class="btn" style="margin-left:6px" onclick="showReviewHistory()">📜 历史复盘</button>'+
+  '<div class="card" id="reviewHistoryCard" style="display:none;margin-top:14px"><div class="card-title"><div class="left">📜 历史复盘</div><button class="btn btn-sm" onclick="document.getElementById(\'reviewHistoryCard\').style.display=\'none\'">收起</button></div><div id="reviewHistoryList"></div></div>';
+}
+function initReview(){loadReview();}
+function loadReview(){const d=currentDate.review;const dt=new Date(d);const wk=WKNAME[dt.getDay()];$('reviewDateLabel').textContent=d===todayStr()?'今日':(fmtDate(dt)+' '+wk);const r=data.reviews[d]||{};$('rev_work').value=r.work||'';$('rev_communication').value=r.communication||'';$('rev_needs').value=r.needs||'';$('rev_feedback').value=r.feedback||'';$('rev_gain').value=r.gain||'';}
+function saveReview(){const d=currentDate.review;data.reviews[d]={work:$('rev_work').value,communication:$('rev_communication').value,needs:$('rev_needs').value,feedback:$('rev_feedback').value,gain:$('rev_gain').value,savedAt:new Date().toISOString()};saveData();toast('复盘已保存 ✓');}
+function showReviewHistory(){$('reviewHistoryCard').style.display='block';const keys=Object.keys(data.reviews).sort().reverse();const wrap=$('reviewHistoryList');if(!keys.length){wrap.innerHTML='<div class="empty">暂无历史复盘</div>';return;}wrap.innerHTML=keys.map(k=>{const r=data.reviews[k];return '<div style="background:var(--review-soft);border:1px solid var(--review-light);border-radius:12px;padding:14px;margin-bottom:10px"><div style="font-weight:700;margin-bottom:8px;color:var(--review-text)">'+k+'</div>'+(r.work?'<div style="font-size:13px;margin-bottom:6px"><b>💼 工作情况：</b>'+esc(r.work).replace(/\n/g,'<br>')+'</div>':'')+(r.communication?'<div style="font-size:13px;margin-bottom:6px"><b>🗣️ 客户沟通：</b>'+esc(r.communication).replace(/\n/g,'<br>')+'</div>':'')+(r.needs?'<div style="font-size:13px;margin-bottom:6px"><b>🎯 客户需求：</b>'+esc(r.needs).replace(/\n/g,'<br>')+'</div>':'')+(r.feedback?'<div style="font-size:13px;margin-bottom:6px"><b>💬 客户反馈：</b>'+esc(r.feedback).replace(/\n/g,'<br>')+'</div>':'')+(r.gain?'<div style="font-size:13px"><b>🌟 收获与不足：</b>'+esc(r.gain).replace(/\n/g,'<br>')+'</div>':'')+'</div>';}).join('');}
+
+/* ===== 当周运动 ===== */
+function renderSportPage(){
+  return '<div class="page-header"><div class="left"><div class="icon" style="background:var(--sport-light)">🏃</div><h2 style="color:var(--sport-primary)">当周运动情况</h2></div><div class="date-switcher"><button onclick="changeWeek(-1)">‹</button><span class="cur" id="sportWeekLabel">--</span><button onclick="changeWeek(1)">›</button></div></div>'+
+  '<div class="card" style="background:var(--sport-soft);border-color:var(--sport-light)"><div class="card-title"><div class="left">📊 本周运动统计</div></div><div class="stat-row" style="grid-template-columns:repeat(3,1fr)"><div class="stat-card"><div class="num" style="color:var(--sport-primary)" id="sportCount">0</div><div class="lbl">运动次数</div></div><div class="stat-card"><div class="num" style="color:var(--sport-primary)" id="sportMinutes">0</div><div class="lbl">总时长(分钟)</div></div><div class="stat-card"><div class="num" style="color:var(--sport-primary)" id="sportTypes">0</div><div class="lbl">运动种类</div></div></div></div>'+
+  '<div class="card"><div class="card-title"><div class="left">➕ 记录一次运动</div></div><div class="form-row form-row-4"><div><label>运动类型</label><select id="sportType"><option value="健身">🏋️ 健身</option><option value="游泳">🏊 游泳</option><option value="跳舞">💃 跳舞</option><option value="其他">🤸 其他</option></select></div><div><label>周几</label><select id="sportDay"><option value="0">周一</option><option value="1">周二</option><option value="2">周三</option><option value="3">周四</option><option value="4">周五</option><option value="5">周六</option><option value="6">周日</option></select></div><div><label>时长(分钟)</label><input class="input" id="sportDuration" type="number" inputmode="numeric" placeholder="30"></div><div style="display:flex;align-items:flex-end"><button class="btn" style="background:var(--sport-primary);color:#fff;width:100%" onclick="addSport()">💾 记录</button></div></div></div>'+
+  '<div id="sportList"></div>'+
+  '<div class="card" style="background:#fffbeb;border-color:#fde68a"><div class="card-title"><div class="left">⏰ 运动提醒</div></div><div class="form-row form-row-2"><div><label>提醒时间</label><input class="input" type="time" id="sportReminderTime" value="18:00"></div><div><label>提醒内容</label><input class="input" id="sportReminderText" value="该去运动啦，动起来！🏃"></div></div><button class="btn" style="background:var(--sport-primary);color:#fff" onclick="setSportReminder()">🔔 设置提醒</button><p style="font-size:12px;color:var(--text-dim);margin-top:10px">提醒会在你打开 App 时检查，浏览器端暂不支持锁屏推送。</p></div>';
+}
+function initSport(){renderSport();}
+function changeWeek(delta){const d=new Date(currentSportWeek);d.setDate(d.getDate()+delta*7);currentSportWeek=fmtFull(d);renderSport();}
+function renderSport(){const wStart=new Date(currentSportWeek);$('sportWeekLabel').textContent=(wStart.getMonth()+1)+'.'+wStart.getDate()+' 起';const wk=currentSportWeek;if(!data.sports[wk])data.sports[wk]=[];const list=data.sports[wk];$('sportCount').textContent=list.length;$('sportMinutes').textContent=list.reduce((s,x)=>s+Number(x.duration||0),0);$('sportTypes').textContent=new Set(list.map(x=>x.type)).size;const typesAll=['健身','游泳','跳舞','其他'];const wrap=$('sportList');const today=todayStr();const days=[];for(let i=0;i<7;i++){const d=new Date(wStart);d.setDate(d.getDate()+i);const ds=fmtFull(d);days.push({ds,wkName:WD[i],dd:d.getDate(),isToday:ds===today});}const tE={健身:'🏋️',游泳:'🏊',跳舞:'💃',其他:'🤸'};wrap.innerHTML=typesAll.map(t=>{const items=list.filter(x=>x.type===t);const dayMap={};items.forEach(x=>{dayMap[x.day]=x;});return '<div class="sport-type"><h4>'+tE[t]+' '+t+' '+(items.length?'<span style="font-size:12px;color:var(--text-dim);font-weight:400">'+items.length+'次 · '+items.reduce((s,x)=>s+Number(x.duration||0),0)+'分钟</span>':'')+'</h4><div class="sport-grid">'+days.map(d=>'<div class="sport-day'+(dayMap[d.ds]?' done':'')+(d.isToday?' today':'')+'" onclick="toggleSportDay(\''+wk+'\',\''+t+'\',\''+d.ds+'\')"><div class="wk">'+d.wkName+'</div><div class="dt">'+d.dd+'</div><div class="dot"></div></div>').join('')+'</div>'+(items.length?'<div style="margin-top:8px">'+items.map(x=>'<div style="font-size:12px;color:var(--text-dim);padding:3px 0">周'+WD[x.day]+' · '+x.duration+'分钟 <button class="del-btn" onclick="delSport(event,\''+wk+'\','+x.id+')">✕</button></div>').join('')+'</div>':'')+'</div>';}).join('');}
+function toggleSportDay(wk,type,ds){if(!data.sports[wk])data.sports[wk]=[];const list=data.sports[wk];const dayIdx=new Date(ds).getDay()===0?6:new Date(ds).getDay()-1;const existing=list.find(x=>x.type===type&&x.day==dayIdx&&x.quick);if(existing){data.sports[wk]=list.filter(x=>x!==existing);}else{list.push({id:Date.now()+Math.random(),type,day:dayIdx,duration:30,quick:true});}saveData();renderSport();}
+function addSport(){const type=$('sportType').value;const day=$('sportDay').value;const duration=parseInt($('sportDuration').value);if(!duration||duration<=0){toast('请输入时长');return;}const wk=currentSportWeek;if(!data.sports[wk])data.sports[wk]=[];data.sports[wk].push({id:Date.now()+Math.random(),type,day:Number(day),duration});saveData();$('sportDuration').value='';renderSport();toast('运动已记录 ✓');}
+function delSport(e,wk,id){e.stopPropagation();if(!confirm('删除这条运动记录？'))return;data.sports[wk]=(data.sports[wk]||[]).filter(x=>x.id!==id);saveData();renderSport();toast('已删除');}
+function setSportReminder(){const time=$('sportReminderTime').value;const text=$('sportReminderText').value;data.sportReminder={time,text};saveData();if('Notification' in window){Notification.requestPermission().then(p=>{if(p==='granted'){toast('提醒已设置，每天 '+time);}else{toast('已保存（请允许通知权限）');}});}else{toast('已保存提醒设置');}}
+
+/* ===== 学习英语 ===== */
+function renderEnglishPage(){
+  return '<div class="page-header"><div class="left"><div class="icon" style="background:var(--english-light)">🔤</div><h2 style="color:var(--english-primary)">学习英语情况</h2></div><div class="date-switcher"><button onclick="changeDate(\'english\',-1)">‹</button><span class="cur" id="englishDateLabel">--</span><button onclick="changeDate(\'english\',1)">›</button></div></div>'+
+  '<div class="card"><div class="card-title"><div class="left">✏️ 添加今日学习</div></div><div class="form-row form-row-4"><div><label>学习形式</label><select id="enType"><option>背单词</option><option>听力</option><option>阅读</option><option>口语</option><option>课程</option></select></div><div><label>时长(分钟)</label><input class="input" id="enDuration" type="number" inputmode="numeric" placeholder="20"></div><div><label>本周书目</label><input class="input" id="enBook" placeholder="如《商务英语900句》"></div><div style="display:flex;align-items:flex-end"><button class="btn" style="background:var(--english-primary);color:#fff;width:100%" onclick="addEnglish()">💾 添加</button></div></div><div class="form-row"><div><label>具体内容</label><input class="input" id="enContent" placeholder="例如：背诵20个商务词汇 / 阅读英文文章一篇"></div></div><div class="form-row"><div><label>掌握程度自评</label><div class="star-rating" id="enStarWrap"><span class="star" data-v="1" onclick="setStar(1)">★</span><span class="star" data-v="2" onclick="setStar(2)">★</span><span class="star" data-v="3" onclick="setStar(3)">★</span><span class="star" data-v="4" onclick="setStar(4)">★</span><span class="star" data-v="5" onclick="setStar(5)">★</span></div></div></div></div>'+
+  '<div class="card" style="background:var(--english-soft);border-color:var(--english-light)"><div class="card-title"><div class="left">📚 本周汇总</div></div><div class="stat-row" style="grid-template-columns:repeat(3,1fr)"><div class="stat-card"><div class="num" style="color:var(--english-primary)" id="enDays">0</div><div class="lbl">学习天数</div></div><div class="stat-card"><div class="num" style="color:var(--english-primary)" id="enMinutes">0</div><div class="lbl">总时长(分钟)</div></div><div class="stat-card"><div class="num" style="color:var(--english-primary)" id="enAvgStar">0</div><div class="lbl">平均掌握度</div></div></div><div id="enBookSummary" style="font-size:13px;color:var(--english-text);margin-top:8px"></div></div>'+
+  '<div class="card"><div class="card-title"><div class="left">📋 今日学习记录</div></div><div id="englishList"></div></div>'+
+  '<div class="card" style="text-align:center;background:var(--listen-soft);border-color:var(--listen-light)"><p style="font-size:13px;color:var(--text-dim);margin-bottom:12px">想找今日英语听力材料和词汇？</p><button class="btn" style="background:var(--listen-primary);color:#fff" onclick="goPage(\'enlistening\')">🎧 去每日英语听力</button></div>';
+}
+function initEnglish(){renderEnglish();}
+function setStar(v){currentEnStar=v;document.querySelectorAll('#enStarWrap .star').forEach((s,i)=>s.classList.toggle('filled',i<v));}
+function renderEnglish(){const d=currentDate.english;const dt=new Date(d);const wk=WKNAME[dt.getDay()];$('englishDateLabel').textContent=d===todayStr()?'今日':(fmtDate(dt)+' '+wk);const list=data.english[d]||[];const wrap=$('englishList');if(!list.length){wrap.innerHTML='<div class="empty">今天还没有学习记录，添加一条吧 📚</div>';}else{const tE={背单词:'📝',听力:'🎧',阅读:'📖',口语:'🗣️',课程:'🎓'};wrap.innerHTML=list.map(x=>'<div class="english-card"><div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px"><div style="font-weight:700;font-size:14px">'+(tE[x.type]||'📚')+' '+esc(x.type)+' · '+x.duration+'分钟</div><button class="del-btn" onclick="delEnglish(\''+d+'\','+x.id+')">✕</button></div>'+(x.content?'<div style="font-size:13px;margin-bottom:4px">'+esc(x.content)+'</div>':'')+'<div style="font-size:12px;color:var(--english-text)">掌握度：'+'★'.repeat(x.star||0)+'☆'.repeat(5-(x.star||0))+(x.book?' · 📖 '+esc(x.book):'')+'</div></div>').join('');}const wkk=weekKeyOfDate(d);const weekList=[];Object.keys(data.english).forEach(k=>{if(weekKeyOfDate(k)===wkk){(data.english[k]||[]).forEach(x=>weekList.push({...x,date:k}));}});$('enDays').textContent=new Set(weekList.map(x=>x.date)).size;$('enMinutes').textContent=weekList.reduce((s,x)=>s+Number(x.duration||0),0);$('enAvgStar').textContent=weekList.length?Math.round(weekList.reduce((s,x)=>s+(x.star||0),0)/weekList.length*10)/10:0;const books=[...new Set(weekList.map(x=>x.book).filter(Boolean))];$('enBookSummary').innerHTML=books.length?'📖 本周书目：'+books.map(b=>esc(b)).join('、'):'';currentEnStar=0;document.querySelectorAll('#enStarWrap .star').forEach(s=>s.classList.remove('filled'));}
+function addEnglish(){const type=$('enType').value;const duration=parseInt($('enDuration').value);const content=$('enContent').value.trim();const book=$('enBook').value.trim();if(!duration||duration<=0){toast('请输入时长');return;}const d=currentDate.english;if(!data.english[d])data.english[d]=[];data.english[d].push({id:Date.now()+Math.random(),type,duration,content,star:currentEnStar,book});saveData();$('enDuration').value='';$('enContent').value='';$('enBook').value='';setStar(0);renderEnglish();toast('学习记录已添加 ✓');}
+function delEnglish(d,id){if(!confirm('删除这条记录？'))return;data.english[d]=(data.english[d]||[]).filter(x=>x.id!==id);saveData();renderEnglish();toast('已删除');}
+
+/* ===== 每日英语听力 ===== */
+function renderListeningPage(){
+  return '<div class="page-header"><div class="left"><div class="icon" style="background:var(--listen-light)">🎧</div><h2 style="color:var(--listen-primary)">每日英语听力</h2></div><div class="date-switcher"><button onclick="changeListenDate(-1)">‹</button><span class="cur" id="listenDateLabel">--</span><button onclick="changeListenDate(1)">›</button></div></div>'+
+  '<div class="card" style="background:var(--listen-soft);border-color:var(--listen-light)"><div class="card-title"><div class="left">🎧 今日推荐听力</div><span class="tag" style="background:var(--listen-light);color:var(--listen-text)" id="listenLevelTag">--</span></div><div id="listenContent"><div class="empty">加载中...</div></div></div>'+
+  '<div class="card"><div class="card-title"><div class="left">📝 今日词汇 (5个)</div><button class="btn btn-sm" style="background:var(--listen-light);color:var(--listen-text)" onclick="markWordsDone()">✓ 全部记住了</button></div><div id="vocabContent"><div class="empty">加载中...</div></div></div>'+
+  '<div class="card"><div class="card-title"><div class="left">📚 更多听力资源</div></div><div id="moreListen"></div></div>'+
+  '<div class="card" style="text-align:center;background:var(--english-soft);border-color:var(--english-light)"><p style="font-size:13px;color:var(--text-dim);margin-bottom:12px">听完记得记录学习时长</p><button class="btn" style="background:var(--english-primary);color:#fff" onclick="goPage(\'english\')">🔤 去记录英语学习</button></div>';
+}
+let currentListenDate=todayStr();
+function initListening(){currentListenDate=todayStr();renderListening();}
+function changeListenDate(delta){currentListenDate=addDays(currentListenDate,delta);renderListening();}
+function renderListening(){
+  const dt=new Date(currentListenDate);const wk=WKNAME[dt.getDay()];
+  $('listenDateLabel').textContent=currentListenDate===todayStr()?'今日':(fmtDate(dt)+' '+wk);
+  // 基于日期生成稳定的推荐内容
+  const dayIdx=Math.floor(new Date(currentListenDate).getTime()/86400000);
+  const listenPool=[
+    {title:'VOA Special English - 慢速新闻',level:'初级',url:'https://www.chinavoa.com/',desc:'语速约90词/分钟，适合听力入门，每篇3-5分钟。聚焦当日国际新闻，词汇基础。'},
+    {title:'VOA Standard English - 常速新闻',level:'中级',url:'https://www.chinavoa.com/',desc:'美国之音常速英语，语速正常，适合有一定基础的学习者，新闻类内容。'},
+    {title:'BBC Learning English - 6 Minute English',level:'初中级',url:'https://www.bbc.co.uk/learningenglish/english/features/6-minute-english',desc:'BBC经典栏目，两人对话讨论一个话题，每集6分钟，附 transcript 和词汇讲解。'},
+    {title:'BBC Learning English - English at Work',level:'中级',url:'https://www.bbc.co.uk/learningenglish/english/features/english-at-work',desc:'商务英语情景剧，围绕办公室场景，适合销售职场人士。'},
+    {title:'TED Talks - 短演讲',level:'高级',url:'https://www.ted.com/talks',desc:'各类主题的英文演讲，语速自然，词汇丰富，附字幕。建议先无字幕听一遍。'},
+    {title:'China Daily - 英语新闻',level:'中级',url:'https://www.chinadaily.com.cn/',desc:'中国日报英文版，国内视角的新闻报道，词汇偏正式。'},
+  ];
+  const item=listenPool[dayIdx%listenPool.length];
+  $('listenLevelTag').textContent=item.level;
+  $('listenContent').innerHTML='<div class="resource-card" style="margin-bottom:0;cursor:default"><div class="rc-top"><span class="rc-badge" style="background:var(--listen-light);color:var(--listen-text)">推荐</span></div><h4 style="color:var(--listen-primary)">'+item.title+'</h4><div class="rc-desc">'+item.desc+'</div><a class="rc-link" href="'+item.url+'" target="_blank">🔗 点击前往学习 ›</a></div>';
+  // 词汇
+  const vocabPool=[
+    [{w:'negotiate',m:'v. 谈判，协商'},{w:'proposal',m:'n. 提案，建议'},{w:'revenue',m:'n. 收入，营收'},{w:'client',m:'n. 客户'},{w:'deadline',m:'n. 截止日期'}],
+    [{w:'strategy',m:'n. 策略，战略'},{w:'feedback',m:'n. 反馈'},{w:'opportunity',m:'n. 机会'},{w:'competitive',m:'adj. 有竞争力的'},{w:'contract',m:'n. 合同'}],
+    [{w:'market',m:'n. 市场'},{w:'solution',m:'n. 解决方案'},{w:'efficient',m:'adj. 高效的'},{w:'partnership',m:'n. 合作关系'},{w:'achievement',m:'n. 成就'}],
+    [{w:'analyze',m:'v. 分析'},{w:'budget',m:'n. 预算'},{w:'customize',m:'v. 定制'},{w:'deliver',m:'v. 交付'},{w:'satisfied',m:'adj. 满意的'}],
+  ];
+  const words=vocabPool[dayIdx%vocabPool.length];
+  const done=data.vocabDone&&data.vocabDone[currentListenDate];
+  $('vocabContent').innerHTML=words.map((v,i)=>'<div class="list-item"><div class="info"><span class="cat" style="background:var(--listen-light);color:var(--listen-text)">'+(i+1)+'</span><div><div style="font-size:15px;font-weight:700">'+v.w+'</div><div style="font-size:12px;color:var(--text-dim)">'+v.m+'</div></div></div>'+(done?'<span style="color:var(--listen-primary)">✓</span>':'')+'</div>').join('');
+  // 更多资源
+  $('moreListen')='<div class="list-item"><div class="info"><span class="cat" style="background:var(--listen-light);color:var(--listen-text)">推荐</span><div>每日英语听力 App<br><span style="font-size:11px;color:var(--text-dim)">欧路词典旗下，海量听力资源</span></div></div><a class="rc-link" href="https://www.eudic.net/ting" target="_blank">前往 ›</a></div><div class="list-item"><div class="info"><span class="cat" style="background:var(--listen-light);color:var(--listen-text)">推荐</span><div>可可英语<br><span style="font-size:11px;color:var(--text-dim)">VOA官方授权，听写训练</span></div></div><a class="rc-link" href="https://www.kekenet.com/" target="_blank">前往 ›</a></div><div class="list-item"><div class="info"><span class="cat" style="background:var(--listen-light);color:var(--listen-text)">推荐</span><div>51VOA<br><span style="font-size:11px;color:var(--text-dim)">每日实时更新VOA听力</span></div></div><a class="rc-link" href="https://www.51voa.com/" target="_blank">前往 ›</a></div>';
+  $('moreListen').innerHTML=$('moreListen');
+}
+function markWordsDone(){if(!data.vocabDone)data.vocabDone={};data.vocabDone[currentListenDate]=true;saveData();renderListening();toast('词汇已标记完成 ✓');}
+
+/* ===== 经济情况 ===== */
+function renderFinancePage(){
+  return '<div class="page-header"><div class="left"><div class="icon" style="background:var(--finance-light)">💰</div><h2 style="color:var(--finance-primary)">经济情况</h2></div><div class="date-switcher"><button onclick="changeDate(\'finance\',-1)">‹</button><span class="cur" id="financeDateLabel">--</span><button onclick="changeDate(\'finance\',1)">›</button></div></div>'+
+  '<div class="tabs"><button class="tab active" onclick="switchFinanceTab(\'daily\')" id="ftab-daily">今日收支</button><button class="tab" onclick="switchFinanceTab(\'fixed\')" id="ftab-fixed">固定支出</button><button class="tab" onclick="switchFinanceTab(\'month\')" id="ftab-month">月度视图</button><button class="tab" onclick="switchFinanceTab(\'debt\')" id="ftab-debt">负债情况</button></div>'+
+  '<div id="financeDailyPanel">'+
+  '<div class="card"><div class="card-title"><div class="left">🛒 日常支出 / 额外支出 / 收入</div></div><div class="form-row form-row-3"><div><label>类型</label><select id="finType" onchange="renderFinCats()"><option value="daily">日常支出</option><option value="extra">额外支出(可报销)</option><option value="income">收入</option></select></div><div><label>分类</label><select id="finCategory"></select></div><div><label>金额(¥)</label><input class="input" id="finAmount" type="number" inputmode="decimal" placeholder="0.00"></div></div><div class="form-row"><div><label>备注</label><input class="input" id="finNote" placeholder="可选说明"></div></div><button class="btn" style="background:var(--finance-primary);color:#fff" onclick="addFinanceTx()">💾 添加记录</button></div>'+
+  '<div class="card" style="background:var(--finance-soft);border-color:var(--finance-light)"><div class="card-title"><div class="left">📊 当日小结</div></div><div class="stat-row" style="grid-template-columns:repeat(4,1fr)"><div class="stat-card"><div class="num" style="color:var(--finance-primary)" id="finDayIncome">0</div><div class="lbl">收入</div></div><div class="stat-card"><div class="num" style="color:#ef4444" id="finDayFixed">0</div><div class="lbl">固定支出</div></div><div class="stat-card"><div class="num" style="color:#f97316" id="finDayDaily">0</div><div class="lbl">日常支出</div></div><div class="stat-card"><div class="num" style="color:#06b6d4" id="finDayExtra">0</div><div class="lbl">额外支出</div></div></div></div>'+
+  '<div class="card"><div class="card-title"><div class="left">📝 今日记录</div></div><div id="financeDayList"></div></div></div>'+
+  '<div id="financeFixedPanel" style="display:none"><div class="card" style="background:var(--finance-soft);border-color:var(--finance-light)"><div class="card-title"><div class="left">🏠 固定支出管理</div><button class="btn btn-sm" style="background:var(--finance-light);color:var(--finance-text)" onclick="resetFixedExpenses()">重置本月</button></div><p style="font-size:13px;color:var(--text-dim);margin-bottom:14px">预设每月固定支出项目，可编辑金额和扣款日期。每月需手动确认是否已扣款。</p><div id="fixedExpenseList"></div></div>'+
+  '<div class="card"><div class="card-title"><div class="left">➕ 添加固定支出项</div></div><div class="form-row form-row-3"><div><label>项目名称</label><input class="input" id="newFixName" placeholder="如：房租、车贷..."></div><div><label>金额(¥)</label><input class="input" id="newFixAmount" type="number" inputmode="decimal" placeholder="0.00"></div><div><label>扣款日期(几号)</label><input class="input" id="newFixDueDay" type="number" inputmode="numeric" placeholder="如 5" min="1" max="31"></div></div><button class="btn" style="background:var(--finance-primary);color:#fff" onclick="addFixedTpl()">💾 添加固定支出</button></div>'+
+  '<div class="card" style="background:var(--finance-soft);border-color:var(--finance-light)"><div class="card-title"><div class="left">📊 本月固定支出汇总</div></div><div class="stat-row" style="grid-template-columns:repeat(3,1fr)"><div class="stat-card"><div class="num" style="color:#f97316" id="fixTotalAmount">0</div><div class="lbl">本月固定支出总额</div></div><div class="stat-card"><div class="num" style="color:#10b981" id="fixPaidCount">0</div><div class="lbl">已扣款</div></div><div class="stat-card"><div class="num" style="color:#ef4444" id="fixUnpaidCount">0</div><div class="lbl">待扣款</div></div></div></div></div>'+
+  '<div id="financeMonthPanel" style="display:none"><div class="card" style="background:var(--finance-soft);border-color:var(--finance-light)"><div class="card-title"><div class="left">📈 本月收支总览</div></div><div class="stat-row" style="grid-template-columns:repeat(4,1fr)"><div class="stat-card"><div class="num" style="color:var(--finance-primary)" id="finMonthIncome">0</div><div class="lbl">总收入</div></div><div class="stat-card"><div class="num" style="color:#ef4444" id="finMonthExpense">0</div><div class="lbl">总支出</div></div><div class="stat-card"><div class="num" style="color:#f97316" id="finMonthFixed">0</div><div class="lbl">固定支出</div></div><div class="stat-card"><div class="num" style="color:#06b6d4" id="finMonthDaily">0</div><div class="lbl">日常支出</div></div></div></div><div class="card"><div class="card-title"><div class="left">📊 分类占比</div></div><div id="financeMonthBreakdown"></div></div><div class="card"><div class="card-title"><div class="left">📋 本月记录</div></div><div id="financeMonthList"></div></div></div>'+
+  '<div id="financeDebtPanel" style="display:none"><div class="card" style="background:var(--finance-soft);border-color:var(--finance-light)"><div class="card-title"><div class="left">💳 资产负债总览</div></div><div class="stat-row" style="grid-template-columns:repeat(4,1fr)"><div class="stat-card"><div class="num" style="color:#ef4444" id="debtTotal">0</div><div class="lbl">总负债</div></div><div class="stat-card"><div class="num" style="color:#f97316" id="debtRemaining">0</div><div class="lbl">剩余还款</div></div><div class="stat-card"><div class="num" style="color:var(--finance-primary)" id="assetCash">0</div><div class="lbl">手头现金</div></div><div class="stat-card"><div class="num" style="color:var(--finance-primary)" id="assetTotal">0</div><div class="lbl">总资产</div></div></div></div><div class="card"><div class="card-title"><div class="left">🏦 负债明细</div></div><div class="debt-grid" id="debtCards"></div></div><div class="card"><div class="card-title"><div class="left">💵 资产与额外收入</div></div><div class="form-row form-row-3"><div><label>手头现金(¥)</label><input class="input" id="assetCashInput" type="number" inputmode="decimal" placeholder="0"></div><div><label>公积金(¥)</label><input class="input" id="assetGpfInput" type="number" inputmode="decimal" placeholder="0"></div><div><label>额外收入(¥)</label><input class="input" id="assetExtraInput" type="number" inputmode="decimal" placeholder="0"></div></div><button class="btn" style="background:var(--finance-primary);color:#fff" onclick="saveAssets()">💾 保存资产</button></div><div class="card"><div class="card-title"><div class="left">✏️ 编辑负债</div></div><div class="form-row form-row-4"><div><label>负债项</label><select id="debtName"><option>招商</option><option>中国银行</option><option>借呗</option><option>花呗</option><option>工行信用卡</option></select></div><div><label>总欠款(¥)</label><input class="input" id="debtTotalInput" type="number" inputmode="decimal" placeholder="0"></div><div><label>剩余还款(¥)</label><input class="input" id="debtRemainingInput" type="number" inputmode="decimal" placeholder="0"></div><div><label>每月还款日</label><input class="input" id="debtDueDay" type="number" inputmode="numeric" placeholder="几号" min="1" max="31"></div></div><button class="btn" style="background:var(--finance-primary);color:#fff" onclick="saveDebt()">💾 保存负债</button></div></div>';
+}
+function initFinance(){renderFinance();switchFinanceTab('daily');}
+const FIN_CATS={daily:['餐饮','咖啡','买菜','购物','娱乐','交通','日用','其他'],extra:['差旅','招待','办公','其他'],income:['工资','提成','报销','奖金','其他']};
+function switchFinanceTab(tab){['daily','fixed','month','debt'].forEach(t=>{$('ftab-'+t).classList.toggle('active',t===tab);$('ftab-'+t).style.background=t===tab?'var(--finance-primary)':'#fff';$('ftab-'+t).style.color=t===tab?'#fff':'';});$('financeDailyPanel').style.display=tab==='daily'?'block':'none';$('financeFixedPanel').style.display=tab==='fixed'?'block':'none';$('financeMonthPanel').style.display=tab==='month'?'block':'none';$('financeDebtPanel').style.display=tab==='debt'?'block':'none';}
+function renderFinCats(){const type=$('finType').value;$('finCategory').innerHTML=FIN_CATS[type].map(c=>'<option>'+c+'</option>').join('');}
+function renderFinance(){const d=currentDate.finance;const dt=new Date(d);const wk=WKNAME[dt.getDay()];$('financeDateLabel').textContent=d===todayStr()?'今日':(fmtDate(dt)+' '+wk);renderFinCats();renderFixedExpenses();renderFixedSummary();renderFinanceDay();renderFinanceMonth();renderDebt();renderAssetsForm();}
+function renderFixedExpenses(){const ym=currentDate.finance.slice(0,7);const monthKey='fixed_'+ym;if(!data.fixedExp[monthKey])data.fixedExp[monthKey]={};const states=data.fixedExp[monthKey];$('fixedExpenseList').innerHTML=data.fixedExpTpl.map((t,i)=>{const paid=states[t.name];return '<div class="list-item" style="flex-direction:column;align-items:stretch;gap:10px"><div style="display:flex;justify-content:space-between;align-items:center;width:100%"><div class="info"><span class="cat" style="background:#fef3c7;color:#92400e">固定</span><div><div style="font-size:14px;font-weight:600">'+esc(t.name)+'</div><div style="font-size:11px;color:var(--text-dim)">每月'+t.dueDay+'号扣款</div></div></div><div style="display:flex;align-items:center;gap:8px"><span style="font-weight:700;font-size:13px;color:'+(paid?'#10b981':'#ef4444')+'">'+(paid?'✓ 已扣':'待扣')+'</span><button class="btn btn-sm" style="background:'+(paid?'#f1f5f9':'#f59e0b')+';color:'+(paid?'':'#fff')+'" onclick="toggleFixedExp('+i+')">'+(paid?'撤销':'确认')+'</button><button class="btn btn-sm" style="background:#fee2e2;color:#991b1b" onclick="delFixedTpl('+i+')">删除</button></div></div><div class="form-row form-row-2" style="margin-bottom:0"><div><label>金额(¥)</label><input class="input" type="number" inputmode="decimal" value="'+t.amount+'" onchange="editFixedTpl('+i+',{amount:this.value})"></div><div><label>扣款日(几号)</label><input class="input" type="number" inputmode="numeric" min="1" max="31" value="'+t.dueDay+'" onchange="editFixedTpl('+i+',{dueDay:this.value})"></div></div></div>';}).join('');}
+function renderFixedSummary(){const ym=currentDate.finance.slice(0,7);const monthKey='fixed_'+ym;if(!data.fixedExp[monthKey])data.fixedExp[monthKey]={};const states=data.fixedExp[monthKey];const total=data.fixedExpTpl.reduce((s,t)=>s+Number(t.amount||0),0);let paid=0,unpaid=0;data.fixedExpTpl.forEach(t=>{if(states[t.name])paid++;else unpaid++;});const fixTotal=$('fixTotalAmount');if(fixTotal){fixTotal.textContent='¥'+total.toFixed(2);$('fixPaidCount').textContent=paid;$('fixUnpaidCount').textContent=unpaid;}}
+function editFixedTpl(i,patch){const t=data.fixedExpTpl[i];if('amount'in patch)t.amount=Number(patch.amount)||0;if('dueDay'in patch)t.dueDay=Math.max(1,Math.min(31,Number(patch.dueDay)||1));saveData();renderFixedSummary();}
+function addFixedTpl(){const name=$('newFixName').value.trim();const amount=Number($('newFixAmount').value);const dueDay=Number($('newFixDueDay').value)||1;if(!name){toast('请输入项目名称');return;}if(!amount||amount<=0){toast('请输入金额');return;}data.fixedExpTpl.push({name,amount,dueDay:Math.max(1,Math.min(31,dueDay))});saveData();$('newFixName').value='';$('newFixAmount').value='';$('newFixDueDay').value='';renderFixedExpenses();renderFixedSummary();toast('已添加固定支出项 ✓');}
+function delFixedTpl(i){if(!confirm('删除「'+data.fixedExpTpl[i].name+'」？'))return;data.fixedExpTpl.splice(i,1);saveData();renderFixedExpenses();renderFixedSummary();toast('已删除');}
+function toggleFixedExp(i){const t=data.fixedExpTpl[i];const ym=currentDate.finance.slice(0,7);const monthKey='fixed_'+ym;if(!data.fixedExp[monthKey])data.fixedExp[monthKey]={};data.fixedExp[monthKey][t.name]=!data.fixedExp[monthKey][t.name];const d=currentDate.finance;if(data.fixedExp[monthKey][t.name]){if(!data.txs.some(x=>x.date===d&&x.type==='fixed'&&x.category===t.name&&x.amount===t.amount)){data.txs.push({id:Date.now()+Math.random(),date:d,type:'fixed',amount:t.amount,category:t.name,note:'固定支出'});}}else{data.txs=data.txs.filter(x=>!(x.date===d&&x.type==='fixed'&&x.category===t.name&&x.amount===t.amount));}saveData();renderFinance();}
+function resetFixedExpenses(){const ym=currentDate.finance.slice(0,7);const monthKey='fixed_'+ym;data.fixedExp[monthKey]={};saveData();renderFinance();toast('已重置本月固定支出');}
+function addFinanceTx(){const type=$('finType').value;const category=$('finCategory').value;const amount=parseFloat($('finAmount').value);const note=$('finNote').value.trim();if(!amount||amount<=0){toast('请输入金额');return;}data.txs.push({id:Date.now()+Math.random(),date:currentDate.finance,type,amount,category,note});saveData();$('finAmount').value='';$('finNote').value='';renderFinance();toast('记录已添加 ✓');}
+function delTx(id){if(!confirm('删除这条记录？'))return;data.txs=data.txs.filter(x=>x.id!==id);saveData();renderFinance();toast('已删除');}
+function renderFinanceDay(){const d=currentDate.finance;const list=data.txs.filter(x=>x.date===d);let income=0,fixed=0,daily=0,extra=0;list.forEach(t=>{if(t.type==='income')income+=t.amount;else if(t.type==='fixed')fixed+=t.amount;else if(t.type==='daily')daily+=t.amount;else if(t.type==='extra')extra+=t.amount;});$('finDayIncome').textContent='¥'+income.toFixed(0);$('finDayFixed').textContent='¥'+fixed.toFixed(0);$('finDayDaily').textContent='¥'+daily.toFixed(0);$('finDayExtra').textContent='¥'+extra.toFixed(0);const wrap=$('financeDayList');if(!list.length){wrap.innerHTML='<div class="empty">今日还没有收支记录</div>';return;}const tM={income:'收入',fixed:'固定',daily:'日常',extra:'额外'};const cC={income:'background:#dcfce7;color:#166534',fixed:'background:#fef3c7;color:#92400e',daily:'background:#dbeafe;color:#1e40af',extra:'background:#ede9fe;color:#5b21b6'};const sorted=[...list].sort((a,b)=>b.id-a.id);wrap.innerHTML=sorted.map(t=>'<div class="list-item"><div class="info"><span class="cat" style="'+cC[t.type]+'">'+tM[t.type]+'</span><div><div style="font-size:14px">'+esc(t.category)+(t.note?' · <span style="color:var(--text-dim)">'+esc(t.note)+'</span>':'')+'</div></div></div><div style="display:flex;align-items:center;gap:8px"><span class="amt" style="color:'+(t.type==='income'?'#10b981':'#ef4444')+'">'+(t.type==='income'?'+':'-')+'¥'+t.amount.toFixed(2)+'</span><button class="del-btn" onclick="delTx('+t.id+')">✕</button></div></div>').join('');}
+function renderFinanceMonth(){const ym=currentDate.finance.slice(0,7);const list=data.txs.filter(x=>x.date.startsWith(ym));let income=0,expense=0,fixed=0,daily=0;const catMap={};list.forEach(t=>{if(t.type==='income')income+=t.amount;else{expense+=t.amount;if(t.type==='fixed')fixed+=t.amount;if(t.type==='daily')daily+=t.amount;}const key=t.type==='income'?'收入:'+t.category:t.category;catMap[key]=(catMap[key]||0)+t.amount;});$('finMonthIncome').textContent='¥'+income.toFixed(0);$('finMonthExpense').textContent='¥'+expense.toFixed(0);$('finMonthFixed').textContent='¥'+fixed.toFixed(0);$('finMonthDaily').textContent='¥'+daily.toFixed(0);const wrap=$('financeMonthBreakdown');const cats=Object.keys(catMap).sort((a,b)=>catMap[b]-catMap[a]);if(!cats.length){wrap.innerHTML='<div class="empty">本月暂无记录</div>';return;}const max=Math.max(...Object.values(catMap));wrap.innerHTML=cats.map(k=>{const v=catMap[k];const pct=Math.round(v/max*100);return '<div style="margin-bottom:10px"><div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:3px"><span>'+esc(k)+'</span><b>¥'+v.toFixed(2)+'</b></div><div style="height:6px;background:var(--panel-2);border-radius:3px;overflow:hidden"><div style="height:100%;width:'+pct+'%;background:var(--finance-primary);border-radius:3px"></div></div></div>';}).join('');const mlist=$('financeMonthList');const sorted=[...list].sort((a,b)=>b.date.localeCompare(a.date)||b.id-a.id);if(!sorted.length){mlist.innerHTML='<div class="empty">本月暂无记录</div>';return;}const tM={income:'收入',fixed:'固定',daily:'日常',extra:'额外'};const cC={income:'background:#dcfce7;color:#166534',fixed:'background:#fef3c7;color:#92400e',daily:'background:#dbeafe;color:#1e40af',extra:'background:#ede9fe;color:#5b21b6'};mlist.innerHTML=sorted.map(t=>'<div class="list-item"><div class="info"><span class="cat" style="'+cC[t.type]+'">'+tM[t.type]+'</span><div><div style="font-size:14px">'+esc(t.category)+'</div><div style="font-size:11px;color:var(--text-dim)">'+t.date+(t.note?' · '+esc(t.note):'')+'</div></div></div><span class="amt" style="color:'+(t.type==='income'?'#10b981':'#ef4444')+'">'+(t.type==='income'?'+':'-')+'¥'+t.amount.toFixed(2)+'</span></div>').join('');}
+function renderDebt(){const ym=currentDate.finance.slice(0,7);const debtKey='debt_'+ym;if(!data.debts[debtKey])data.debts[debtKey]={};const states=data.debts[debtKey];const allNames=['招商','中国银行','借呗','花呗','工行信用卡'];let totalDebt=0,totalRemaining=0;const cards=allNames.map(name=>{const info=data.debts[name]||{total:0,remaining:0,dueDay:1};totalDebt+=info.total;totalRemaining+=info.remaining;return {name,...info,paid:states[name]};});$('debtTotal').textContent='¥'+totalDebt.toFixed(0);$('debtRemaining').textContent='¥'+totalRemaining.toFixed(0);const a=data.assets[ym]||{cash:0,gpf:0,extra:0};const totalAsset=Number(a.cash||0)+Number(a.gpf||0)+Number(a.extra||0);$('assetCash').textContent='¥'+(a.cash||0).toFixed(0);$('assetTotal').textContent='¥'+totalAsset.toFixed(0);$('debtCards').innerHTML=cards.map(c=>'<div class="debt-card"><h5>🏦 '+esc(c.name)+'</h5><div class="row"><span>总欠款</span><span class="val">¥'+c.total.toFixed(2)+'</span></div><div class="row"><span>剩余还款</span><span class="val" style="color:#ef4444">¥'+c.remaining.toFixed(2)+'</span></div><div class="row"><span>每月还款日</span><span class="val">'+c.dueDay+'号</span></div><div class="row"><span>本月状态</span><span style="color:'+(c.paid?'#10b981':'#f59e0b')+';font-weight:700">'+(c.paid?'✓ 已还':'待还款')+'</span></div></div>').join('');}
+function renderAssetsForm(){const ym=currentDate.finance.slice(0,7);const a=data.assets[ym]||{cash:0,gpf:0,extra:0};$('assetCashInput').value=a.cash||'';$('assetGpfInput').value=a.gpf||'';$('assetExtraInput').value=a.extra||'';}
+function saveAssets(){const ym=currentDate.finance.slice(0,7);data.assets[ym]={cash:Number($('assetCashInput').value)||0,gpf:Number($('assetGpfInput').value)||0,extra:Number($('assetExtraInput').value)||0};saveData();renderDebt();toast('资产已保存 ✓');}
+function saveDebt(){const name=$('debtName').value;const total=Number($('debtTotalInput').value)||0;const remaining=Number($('debtRemainingInput').value)||0;const dueDay=Number($('debtDueDay').value)||1;data.debts[name]={total,remaining,dueDay};saveData();$('debtTotalInput').value='';$('debtRemainingInput').value='';$('debtDueDay').value='';renderDebt();toast('负债已保存 ✓');}
+
+/* ===== 每日财经计划 ===== */
+function renderFinanceNewsPage(){
+  return '<div class="page-header"><div class="left"><div class="icon" style="background:var(--news-light)">📈</div><h2 style="color:var(--news-primary)">每日财经计划</h2></div><div class="date-switcher"><button onclick="changeNewsDate(-1)">‹</button><span class="cur" id="newsDateLabel">--</span><button onclick="changeNewsDate(1)">›</button></div></div>'+
+  '<div class="card" style="background:var(--news-soft);border-color:var(--news-light)"><div class="card-title"><div class="left">📰 今日推荐财经新闻 (2篇)</div></div><div id="newsContent"><div class="empty">加载中...</div></div></div>'+
+  '<div class="card"><div class="card-title"><div class="left">📊 我的财经关注</div></div><div id="myNewsFocus"></div>'+
+  '<div class="form-row" style="margin-top:12px"><div><label>添加关注点</label><input class="input" id="newsFocusInput" placeholder="如：A股、新能源、AI、黄金..."></div></div><button class="btn" style="background:var(--news-primary);color:#fff" onclick="addNewsFocus()">+ 添加关注</button></div>'+
+  '<div class="card"><div class="card-title"><div class="left">📚 更多财经资讯源</div></div><div id="moreNews"></div></div>';
+}
+let currentNewsDate=todayStr();
+function initFinanceNews(){currentNewsDate=todayStr();renderFinanceNews();}
+function changeNewsDate(delta){currentNewsDate=addDays(currentNewsDate,delta);renderFinanceNews();}
+function renderFinanceNews(){
+  const dt=new Date(currentNewsDate);const wk=WKNAME[dt.getDay()];
+  $('newsDateLabel').textContent=currentNewsDate===todayStr()?'今日':(fmtDate(dt)+' '+wk);
+  // 推荐两篇（基于日期稳定选择）
+  const newsPool=[
+    {title:'A股市场分析与策略',src:'新浪财经',url:'https://finance.sina.com.cn/stock/',desc:'聚焦当日A股盘面、板块轮动、北向资金流向，附机构观点。适合销售关注市场情绪。'},
+    {title:'宏观经济数据解读',src:'财联社',url:'https://www.cls.cn/',desc:'当日重要宏观数据发布（PMI、CPI、社融等）及解读，把握经济周期。'},
+    {title:'行业深度：新能源/AI/消费',src:'36氪',url:'https://36kr.com/',desc:'热门行业深度报道，了解产业链格局和投资机会，对销售谈资有帮助。'},
+    {title:'全球市场：美股/港股/外汇',src:'新浪财经',url:'https://finance.sina.com.cn/',desc:'隔夜美股、港股、美元/人民币汇率动态，全球视角。'},
+    {title:'楼市与利率政策',src:'财联社',url:'https://www.cls.cn/',desc:'房地产政策、LPR利率、房贷动态，与个人财务相关。'},
+    {title:'大宗商品：黄金/原油',src:'新浪财经',url:'https://finance.sina.com.cn/futures/',desc:'黄金、原油、铜等大宗商品行情与分析。'},
+  ];
+  const dayIdx=Math.floor(new Date(currentNewsDate).getTime()/86400000);
+  const n1=newsPool[dayIdx%newsPool.length];
+  const n2=newsPool[(dayIdx+3)%newsPool.length];
+  $('newsContent').innerHTML=[n1,n2].map(n=>'<div class="resource-card" style="cursor:default"><div class="rc-top"><span class="rc-badge" style="background:var(--news-light);color:var(--news-text)">'+n.src+'</span></div><h4 style="color:var(--news-primary)">'+n.title+'</h4><div class="rc-desc">'+n.desc+'</div><a class="rc-link" href="'+n.url+'" target="_blank" style="color:var(--news-primary)">🔗 点击阅读全文 ›</a></div>').join('');
+  // 我的关注
+  const focus=data.newsFocus||[];
+  $('myNewsFocus').innerHTML=focus.length?focus.map((f,i)=>'<div class="list-item"><div class="info"><span class="cat" style="background:var(--news-light);color:var(--news-text)">关注</span><div style="font-size:14px">'+esc(f)+'</div></div><button class="del-btn" onclick="delNewsFocus('+i+')">✕</button></div>').join(''):'<div class="empty">还没有添加关注点</div>';
+  // 更多源
+  const sources=[{name:'财联社',desc:'A股24小时电报，快速权威',url:'https://www.cls.cn/'},{name:'36氪',desc:'创业、科技、行业深度',url:'https://36kr.com/'},{name:'新浪财经',desc:'综合财经，数据齐全',url:'https://finance.sina.com.cn/'},{name:'第一财经',desc:'专业财经媒体',url:'https://www.yicai.com/'}];
+  $('moreNews').innerHTML=sources.map(s=>'<div class="list-item"><div class="info"><span class="cat" style="background:var(--news-light);color:var(--news-text)">源</span><div><div style="font-size:14px">'+s.name+'</div><div style="font-size:11px;color:var(--text-dim)">'+s.desc+'</div></div></div><a class="rc-link" href="'+s.url+'" target="_blank" style="color:var(--news-primary)">前往 ›</a></div>').join('');
+}
+function addNewsFocus(){const v=$('newsFocusInput').value.trim();if(!v){toast('请输入关注点');return;}if(!data.newsFocus)data.newsFocus=[];data.newsFocus.push(v);saveData();$('newsFocusInput').value='';renderFinanceNews();toast('已添加');}
+function delNewsFocus(i){data.newsFocus.splice(i,1);saveData();renderFinanceNews();toast('已删除');}
+
+/* ===== AI学习计划 ===== */
+function renderAILearnPage(){
+  const stages=[
+    {num:1,title:'入门阶段：建立AI认知',time:'2-4周',topics:[
+      {name:'了解AI是什么',tip:'理解人工智能、机器学习、深度学习的关系，看几部科普视频（推荐李宏毅教授的入门课）'},
+      {name:'体验主流AI工具',tip:'动手使用 ChatGPT、Claude、文心一言、通义千问，感受AI能力边界'},
+      {name:'学会写Prompt',tip:'掌握提示词工程基础，让AI输出更精准（角色设定、Few-shot、思维链）'},
+      {name:'AI办公提效',tip:'用AI写邮件、做PPT大纲、总结会议记录、翻译，立即用到销售工作中'},
+    ]},
+    {num:2,title:'基础阶段：Python与数学',time:'1-3个月',topics:[
+      {name:'Python编程基础',tip:'变量、循环、函数、列表字典，推荐廖雪峰Python教程或菜鸟教程'},
+      {name:'常用库入门',tip:'requests（爬虫）、pandas（数据处理）、openpyxl（Excel操作），销售可用来批量处理客户表'},
+      {name:'数学基础（轻量）',tip:'了解线性代数（矩阵）、概率统计（均值方差），不需深究，够用即可'},
+      {name:'调用AI API',tip:'学会用Python调用OpenAI/通义千问API，做自己的小工具'},
+    ]},
+    {num:3,title:'进阶阶段：机器学习',time:'2-4个月',topics:[
+      {name:'机器学习概念',tip:'监督/无监督学习、训练集测试集、过拟合欠拟合，吴恩达Machine Learning课'},
+      {name:'常用算法',tip:'线性回归、决策树、随机森林、K-means，用scikit-learn上手'},
+      {name:'实战项目',tip:'客户分群（K-means）、销售预测（回归）、客户流失预警（分类）'},
+      {name:'模型评估',tip:'准确率、精确率、召回率、F1，知道模型好不好'},
+    ]},
+    {num:4,title:'高阶阶段：深度学习与大模型',time:'3-6个月',topics:[
+      {name:'神经网络基础',tip:'前馈网络、激活函数、反向传播，PyTorch框架入门'},
+      {name:'NLP与Transformer',tip:'注意力机制、Transformer架构，理解ChatGPT背后的原理'},
+      {name:'大模型应用',tip:'RAG（检索增强生成）、Fine-tuning（微调）、Agent（智能体），做销售知识库助手'},
+      {name:'部署上线',tip:'Gradio/Streamlit做Web界面，把自己的AI工具分享给同事用'},
+    ]},
+  ];
+  return '<div class="page-header"><div class="left"><div class="icon" style="background:var(--ai-light)">🤖</div><h2 style="color:var(--ai-primary)">AI学习计划</h2></div></div>'+
+  '<div class="card" style="background:var(--ai-soft);border-color:var(--ai-light)"><div class="card-title"><div class="left">🎯 学习理念</div></div><p style="font-size:13px;color:var(--ai-text);line-height:1.7">利用碎片时间，<b>每周3-5小时</b>即可稳步推进。每个阶段都配有实战项目，学完即可用到销售工作中。建议按顺序学习，不要跳级。完成一个阶段后，在<b>每周复盘</b>里记录心得。</p></div>'+
+  stages.map(s=>'<div class="ai-stage"><div class="stage-head"><div style="display:flex;align-items:center;gap:10px"><div class="stage-num">'+s.num+'</div><h3 style="color:var(--ai-primary)">'+s.title+'</h3></div><span class="stage-time">⏱ '+s.time+'</span></div><div class="topics">'+s.topics.map(t=>'<div class="topic"><div class="dot"></div><div><b>'+t.name+'</b><span class="tip">'+t.tip+'</span></div></div>').join('')+'</div></div>').join('')+
+  '<div class="card"><div class="card-title"><div class="left">📚 推荐学习资源</div></div>'+
+  '<div class="list-item"><div class="info"><span class="cat" style="background:var(--ai-light);color:var(--ai-text)">视频</span><div><div style="font-size:14px">李宏毅AI入门课</div><div style="font-size:11px;color:var(--text-dim)">台大教授，中文讲解，B站可看</div></div></div><a class="rc-link" href="https://www.bilibili.com/" target="_blank" style="color:var(--ai-primary)">前往 ›</a></div>'+
+  '<div class="list-item"><div class="info"><span class="cat" style="background:var(--ai-light);color:var(--ai-text)">课程</span><div><div style="font-size:14px">吴恩达 Machine Learning</div><div style="font-size:11px;color:var(--text-dim)">Coursera经典课，中文字幕</div></div></div><a class="rc-link" href="https://www.coursera.org/" target="_blank" style="color:var(--ai-primary)">前往 ›</a></div>'+
+  '<div class="list-item"><div class="info"><span class="cat" style="background:var(--ai-light);color:var(--ai-text)">文档</span><div><div style="font-size:14px">OpenAI API 文档</div><div style="font-size:11px;color:var(--text-dim)">官方文档，学API调用必看</div></div></div><a class="rc-link" href="https://platform.openai.com/docs" target="_blank" style="color:var(--ai-primary)">前往 ›</a></div>'+
+  '<div class="list-item"><div class="info"><span class="cat" style="background:var(--ai-light);color:var(--ai-text)">社区</span><div><div style="font-size:14px">Hugging Face</div><div style="font-size:11px;color:var(--text-dim)">模型库+教程，全球最大AI社区</div></div></div><a class="rc-link" href="https://huggingface.co/" target="_blank" style="color:var(--ai-primary)">前往 ›</a></div></div>'+
+  '<div class="card"><div class="card-title"><div class="left">✅ 我的学习进度</div></div><div id="aiProgress"></div><div class="form-row" style="margin-top:12px"><div><label>记录今日学习内容</label><input class="input" id="aiLearnInput" placeholder="如：看完李宏毅第3集，学会Prompt技巧..."></div></div><button class="btn" style="background:var(--ai-primary);color:#fff" onclick="addAILearnLog()">💾 记录</button></div>';
+}
+function initAILearn(){renderAIProgress();}
+function renderAIProgress(){
+  const logs=data.aiLearnLog||[];
+  const wrap=$('aiProgress');
+  if(!wrap)return;
+  if(!logs.length){wrap.innerHTML='<div class="empty">还没有学习记录，开始你的AI学习之旅吧 🚀</div>';return;}
+  wrap.innerHTML=logs.slice(-10).reverse().map(l=>'<div class="list-item"><div class="info"><span class="cat" style="background:var(--ai-light);color:var(--ai-text)">学习</span><div><div style="font-size:14px">'+esc(l.content)+'</div><div style="font-size:11px;color:var(--text-dim)">'+l.date+'</div></div></div><button class="del-btn" onclick="delAILearnLog(\''+l.id+'\')">✕</button></div>').join('');
+}
+function addAILearnLog(){const v=$('aiLearnInput').value.trim();if(!v){toast('请输入内容');return;}if(!data.aiLearnLog)data.aiLearnLog=[];data.aiLearnLog.push({id:Date.now()+Math.random(),date:todayStr(),content:v});saveData();$('aiLearnInput').value='';renderAIProgress();toast('已记录 ✓');}
+function delAILearnLog(id){data.aiLearnLog=(data.aiLearnLog||[]).filter(x=>String(x.id)!==String(id));saveData();renderAIProgress();toast('已删除');}
+
+/* ===== 每周复盘 ===== */
+function renderWeeklyPage(){
+  return '<div class="page-header"><div class="left"><div class="icon" style="background:var(--weekly-light)">📅</div><h2 style="color:var(--weekly-primary)">每周复盘</h2></div><div class="date-switcher"><button onclick="changeWeeklyWeek(-1)">‹</button><span class="cur" id="weeklyWeekLabel">--</span><button onclick="changeWeeklyWeek(1)">›</button></div></div>'+
+  '<div class="card weekly-auto"><div class="card-title"><div class="left">📊 本周数据自动汇总</div></div><div class="item"><span>🏃 运动总时长</span><b id="wkSportTotal">0 分钟</b></div><div class="item"><span>🔤 英语学习天数</span><b id="wkEnglishDays">0 天</b></div><div class="item"><span>📚 英语学习总时长</span><b id="wkEnglishMinutes">0 分钟</b></div><div class="item"><span>💰 本周支出</span><b id="wkWeekExpense">¥0</b></div><div class="item"><span>💰 本周收入</span><b id="wkWeekIncome">¥0</b></div></div>'+
+  '<div class="card"><div class="card-title"><div class="left">💼 本周完成的重要工作</div></div><textarea id="wk_work" placeholder="总结本周销售成果、签约、推进、客户开发..."></textarea></div>'+
+  '<div class="card"><div class="card-title"><div class="left">📚 本周阅读/英语/运动达成情况</div></div><textarea id="wk_habit_summary" placeholder="可手动补充总结，上方已自动带出部分数据..."></textarea></div>'+
+  '<div class="card"><div class="card-title"><div class="left">💰 本周收支总览</div></div><textarea id="wk_finance_summary" placeholder="本周总支出多少？主要开支类别？是否超支？..."></textarea></div>'+
+  '<div class="card"><div class="card-title"><div class="left">🌟 本周最大收获与成长</div></div><textarea id="wk_gain" placeholder="本周学到了什么？有哪些成长？"></textarea></div>'+
+  '<div class="card"><div class="card-title"><div class="left">⚠️ 本周遇到的挑战及处理方式</div></div><textarea id="wk_challenge" placeholder="遇到了什么困难？怎么处理的？下次如何预防？"></textarea></div>'+
+  '<div class="card"><div class="card-title"><div class="left">🎯 下周计划</div></div><textarea id="wk_next" placeholder="下周重点工作目标和个人提升计划..."></textarea></div>'+
+  '<button class="btn" style="background:var(--weekly-primary);color:#fff;margin-bottom:14px" onclick="saveWeekly()">💾 保存本周复盘</button><button class="btn" onclick="showWeeklyHistory()">📜 历史周复盘</button>'+
+  '<div class="card" id="weeklyHistoryCard" style="display:none;margin-top:14px"><div class="card-title"><div class="left">📜 历史周复盘</div><button class="btn btn-sm" onclick="document.getElementById(\'weeklyHistoryCard\').style.display=\'none\'">收起</button></div><div id="weeklyHistoryList"></div></div>';
+}
+function initWeekly(){loadWeekly();}
+function changeWeeklyWeek(delta){const d=new Date(currentWeeklyWeek);d.setDate(d.getDate()+delta*7);currentWeeklyWeek=fmtFull(d);loadWeekly();}
+function loadWeekly(){const wStart=new Date(currentWeeklyWeek);$('weeklyWeekLabel').textContent=(wStart.getMonth()+1)+'.'+wStart.getDate()+' 起';const wk=currentWeeklyWeek;const sportList=data.sports[wk]||[];const sportMinutes=sportList.reduce((s,x)=>s+Number(x.duration||0),0);const enDays=new Set();let enMinutes=0;Object.keys(data.english).forEach(k=>{if(weekKeyOfDate(k)===wk){const list=data.english[k]||[];if(list.length){enDays.add(k);enMinutes+=list.reduce((s,x)=>s+Number(x.duration||0),0);}}});const wEnd=addDays(wk,6);let weekIncome=0,weekExpense=0;data.txs.forEach(t=>{if(t.date>=wk&&t.date<=wEnd){if(t.type==='income')weekIncome+=t.amount;else weekExpense+=t.amount;}});$('wkSportTotal').textContent=sportMinutes+' 分钟';$('wkEnglishDays').textContent=enDays.size+' 天';$('wkEnglishMinutes').textContent=enMinutes+' 分钟';$('wkWeekExpense').textContent='¥'+weekExpense.toFixed(2);$('wkWeekIncome').textContent='¥'+weekIncome.toFixed(2);const w=data.weekly[wk]||{};$('wk_work').value=w.work||'';$('wk_habit_summary').value=w.habit_summary||'';$('wk_finance_summary').value=w.finance_summary||'';$('wk_gain').value=w.gain||'';$('wk_challenge').value=w.challenge||'';$('wk_next').value=w.next||'';}
+function saveWeekly(){const wk=currentWeeklyWeek;data.weekly[wk]={work:$('wk_work').value,habit_summary:$('wk_habit_summary').value,finance_summary:$('wk_finance_summary').value,gain:$('wk_gain').value,challenge:$('wk_challenge').value,next:$('wk_next').value,savedAt:new Date().toISOString()};saveData();toast('本周复盘已保存 ✓');}
+function showWeeklyHistory(){$('weeklyHistoryCard').style.display='block';const keys=Object.keys(data.weekly).sort().reverse();const wrap=$('weeklyHistoryList');if(!keys.length){wrap.innerHTML='<div class="empty">暂无历史周复盘</div>';return;}wrap.innerHTML=keys.map(k=>{const w=data.weekly[k];return '<div style="background:var(--weekly-soft);border:1px solid var(--weekly-light);border-radius:12px;padding:14px;margin-bottom:10px"><div style="font-weight:700;margin-bottom:8px;color:var(--weekly-text)"> week of '+k+'</div>'+(w.work?'<div style="font-size:13px;margin-bottom:6px"><b>💼 完成工作：</b>'+esc(w.work).replace(/\n/g,'<br>')+'</div>':'')+(w.habit_summary?'<div style="font-size:13px;margin-bottom:6px"><b>📚 习惯达成：</b>'+esc(w.habit_summary).replace(/\n/g,'<br>')+'</div>':'')+(w.finance_summary?'<div style="font-size:13px;margin-bottom:6px"><b>💰 收支总览：</b>'+esc(w.finance_summary).replace(/\n/g,'<br>')+'</div>':'')+(w.gain?'<div style="font-size:13px;margin-bottom:6px"><b>🌟 收获成长：</b>'+esc(w.gain).replace(/\n/g,'<br>')+'</div>':'')+(w.challenge?'<div style="font-size:13px;margin-bottom:6px"><b>⚠️ 挑战处理：</b>'+esc(w.challenge).replace(/\n/g,'<br>')+'</div>':'')+(w.next?'<div style="font-size:13px"><b>🎯 下周计划：</b>'+esc(w.next).replace(/\n/g,'<br>')+'</div>':'')+'</div>';}).join('');}
+
+/* ===== 顶栏与天气 ===== */
+function renderTopbar(){const d=new Date();const wk=WKNAME[d.getDay()];$('topDate').textContent=(d.getMonth()+1)+'月'+d.getDate()+'日 '+wk;}
+async function loadWeather(){try{const res=await fetch('https://wttr.in/?format=j1');const j=await res.json();const cur=j.current_condition[0];const desc=cur.weatherDesc[0].value;const temp=cur.temp_C;const feel=cur.FeelsLikeC;$('weatherText').textContent=desc+' '+temp+'°C 体感'+feel+'°';const code=cur.weatherCode;$('weatherBox').querySelector('.w-icon').textContent=weatherIcon(code);}catch(e){$('weatherText').textContent='天气获取失败';}}
+function weatherIcon(code){code=String(code);if(code.startsWith('113'))return '☀️';if(code.startsWith('116'))return '⛅';if(code.startsWith('119')||code.startsWith('122'))return '☁️';if(code.startsWith('143')||code.startsWith('248')||code.startsWith('260'))return '🌫';if(code.startsWith('179')||code.startsWith('182')||code.startsWith('185')||code.startsWith('227')||code.startsWith('230')||code.startsWith('320')||code.startsWith('323')||code.startsWith('326')||code.startsWith('329')||code.startsWith('332')||code.startsWith('335')||code.startsWith('338')||code.startsWith('350')||code.startsWith('353')||code.startsWith('356')||code.startsWith('359')||code.startsWith('362')||code.startsWith('365'))return '🌧';if(code.startsWith('200')||code.startsWith('386')||code.startsWith('389'))return '⛈';return '🌤';}
+
+/* ===== 安装提示 ===== */
+function checkInstall(){const isStandalone=window.matchMedia('(display-mode: standalone)').matches||window.navigator.standalone===true;if(!isStandalone&&!localStorage.getItem('install_dismissed')){setTimeout(()=>{$('installBar').style.display='flex';},3000);}}
+function dismissInstall(){$('installBar').style.display='none';localStorage.setItem('install_dismissed','1');}
+
+/* ===== Service Worker ===== */
+if('serviceWorker' in navigator){window.addEventListener('load',()=>{navigator.serviceWorker.register('sw.js').catch(()=>{});});}
+
+/* ===== 初始化 ===== */
+renderNav();
+renderTopbar();
+goPage('home');
+loadWeather();
+checkInstall();
+</script>
+</body>
+</html>
