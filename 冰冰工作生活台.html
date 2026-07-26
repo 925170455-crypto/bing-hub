@@ -206,7 +206,10 @@ label{font-size:12px;color:var(--text-dim);margin-bottom:5px;display:block;font-
         <button class="menu-toggle" id="menuToggle" onclick="toggleSidebar()">☰</button>
         <div class="greet">早安，冰冰 👋<br><b id="topDate">--</b></div>
       </div>
-      <div class="weather" id="weatherBox"><span class="w-icon">🌤</span><span id="weatherText">定位中...</span></div>
+      <div style="display:flex;align-items:center;gap:8px">
+        <div class="weather" id="weatherBox"><span class="w-icon">🌤</span><span id="weatherText">定位中...</span></div>
+        <button onclick="refreshApp()" style="background:var(--home-light);border:none;width:36px;height:36px;border-radius:50%;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0">🔄</button>
+      </div>
     </header>
     <div class="content" id="content"></div>
   </main>
@@ -556,6 +559,7 @@ function weatherIcon(code){code=String(code);if(code.startsWith('113'))return '�
 /* ===== 安装提示 ===== */
 function checkInstall(){const isStandalone=window.matchMedia('(display-mode: standalone)').matches||window.navigator.standalone===true;if(!isStandalone&&!localStorage.getItem('install_dismissed')){setTimeout(()=>{$('installBar').style.display='flex';},3000);}}
 function dismissInstall(){$('installBar').style.display='none';localStorage.setItem('install_dismissed','1');}
+function refreshApp(){let fresh=loadData();if(fresh&&Object.keys(fresh).length){data=fresh;}['plan_daily','plan_work','reviews','sports','english','weekly','debts','assets','fixedExp'].forEach(k=>{if(!data[k])data[k]={};});if(!Array.isArray(data.txs))data.txs=[];if(!data.fixedExpTpl){data.fixedExpTpl=[{name:'房租',amount:3000,dueDay:1},{name:'水电',amount:300,dueDay:5},{name:'保险',amount:500,dueDay:10},{name:'交通',amount:400,dueDay:15}];}const DEFAULT_DEBTS={'招商':{total:0,monthlyPay:0,dueDay:9},'中国银行':{total:0,monthlyPay:0,dueDay:15},'借呗':{total:0,monthlyPay:0,dueDay:20},'花呗':{total:0,monthlyPay:0,dueDay:9},'工行信用卡':{total:0,monthlyPay:0,dueDay:25}};Object.keys(DEFAULT_DEBTS).forEach(k=>{if(!data.debts[k])data.debts[k]=DEFAULT_DEBTS[k];});fixedMonth=currentDate.finance.slice(0,7);debtMonth=currentDate.finance.slice(0,7);monthView=currentDate.finance.slice(0,7);const active=document.querySelector('.nav-item.active');const page=active?active.dataset.page:'home';renderNav();renderTopbar();goPage(page);loadWeather();toast('已刷新 ✓');}
 
 /* ===== Service Worker ===== */
 if('serviceWorker' in navigator){window.addEventListener('load',()=>{navigator.serviceWorker.register('sw.js').catch(()=>{});});}
