@@ -194,7 +194,7 @@ label{font-size:12px;color:var(--text-dim);margin-bottom:5px;display:block;font-
   <aside class="sidebar">
     <div class="brand">
       <img src="icon-192.png" class="avatar" alt="冰冰">
-      <div class="info"><div class="name">冰冰工作生活台</div><div class="sub">销售成长 · 生活管理 <span id="verTag" style="opacity:.6">v29</span></div></div>
+      <div class="info"><div class="name">冰冰工作生活台</div><div class="sub">销售成长 · 生活管理 <span id="verTag" style="opacity:.6">v31</span></div></div>
     </div>
     <nav class="nav-items" id="navItems"></nav>
     <div class="sidebar-footer">数据本地保存 · 定期备份</div>
@@ -233,6 +233,9 @@ const WD=['周一','周二','周三','周四','周五','周六','周日'];
 const WKNAME=['周日','周一','周二','周三','周四','周五','周六'];
 
 /* ===== 数据初始化 ===== */
+function showErrBanner(msg){try{let b=document.getElementById('errBanner');if(!b){b=document.createElement('div');b.id='errBanner';b.style.cssText='position:fixed;top:0;left:0;right:0;z-index:99999;background:#fef2f2;color:#991b1b;font-size:12px;padding:8px 12px;border-bottom:1px solid #fecaca;word-break:break-all;max-height:40%;overflow:auto';document.body.appendChild(b);}b.textContent='\u26a0\ufe0f \u9519\u8bef\uff1a'+msg;}catch(_){}}
+window.addEventListener('error',function(e){showErrBanner((e.message||'\u811a\u672c\u9519\u8bef')+(e.lineno?' @\u7b2c'+e.lineno+'\u884c':''));});
+window.addEventListener('unhandledrejection',function(e){showErrBanner('\u5f02\u6b65\u9519\u8bef:'+((e.reason&&e.reason.message)||e.reason));});
 let data=loadData();
 ['plan_daily','plan_work','reviews','sports','english','weekly','debts','assets','fixedExp'].forEach(k=>{if(!data[k])data[k]={};});
 if(!Array.isArray(data.txs))data.txs=[];
@@ -276,7 +279,7 @@ function goPage(page){
   $('content').scrollTop=0;
   $('content').innerHTML=renderPage(page);
   const initMap={plan:initPlan,review:initReview,sport:initSport,english:initEnglish,enlistening:initListening,finance:initFinance,financeNews:initFinanceNews,ailearn:initAILearn,weekly:initWeekly};
-  if(initMap[page]){try{initMap[page]();}catch(e){console.error(e);toast('页面加载出错：'+e.message);}}
+  if(initMap[page]){try{initMap[page]();}catch(e){console.error(e);showErrBanner('页面加载出错：'+e.message);}}
   setTimeout(()=>{const m=MODULES.find(x=>x.key===page);if(m)document.querySelectorAll('.tab.active').forEach(t=>{t.style.background=m.color;t.style.color='#fff';});},50);
 }
 
@@ -430,7 +433,7 @@ function renderFinancePage(){
 }
 function initFinance(){renderFinance();switchFinanceTab('daily');}
 const FIN_CATS={daily:['咖啡','奶茶','早餐','中餐','晚餐','烟','买菜','日用','台球','喝酒','交通','聚会吃饭','买衣服'],extra:['差旅','招待','办公','其他'],income:['工资','提成','报销','奖金','其他']};
-function switchFinanceTab(tab){['daily','fixed','month','debt'].forEach(t=>{$('ftab-'+t).classList.toggle('active',t===tab);$('ftab-'+t).style.background=t===tab?'var(--finance-primary)':'#fff';$('ftab-'+t).style.color=t===tab?'#fff':'';});$('financeDailyPanel').style.display=tab==='daily'?'block':'none';$('financeFixedPanel').style.display=tab==='fixed'?'block':'none';$('financeMonthPanel').style.display=tab==='month'?'block':'none';$('financeDebtPanel').style.display=tab==='debt'?'block':'none';try{if(tab==='debt'){renderDebt();renderAssetsForm();}if(tab==='fixed'){renderFixedExpenses();renderFixedSummary();}if(tab==='month'){renderFinanceMonth();}}catch(e){console.error(e);toast('数据加载出错：'+e.message);}}function changeFixedMonth(){const sel=$('fixedMonthSelect');if(sel){fixedMonth=sel.value;renderFixedExpenses();renderFixedSummary();}}function changeDebtMonth(){const sel=$('debtMonthSelect');if(sel){debtMonth=sel.value;renderDebt();}}function changeMonthView(){const sel=$('monthViewSelect');if(sel){monthView=sel.value;renderFinanceMonth();}}
+function switchFinanceTab(tab){['daily','fixed','month','debt'].forEach(t=>{$('ftab-'+t).classList.toggle('active',t===tab);$('ftab-'+t).style.background=t===tab?'var(--finance-primary)':'#fff';$('ftab-'+t).style.color=t===tab?'#fff':'';});$('financeDailyPanel').style.display=tab==='daily'?'block':'none';$('financeFixedPanel').style.display=tab==='fixed'?'block':'none';$('financeMonthPanel').style.display=tab==='month'?'block':'none';$('financeDebtPanel').style.display=tab==='debt'?'block':'none';try{if(tab==='debt'){renderDebt();renderAssetsForm();}if(tab==='fixed'){renderFixedExpenses();renderFixedSummary();}if(tab==='month'){renderFinanceMonth();}}catch(e){console.error(e);showErrBanner('数据加载出错：'+e.message);}}function changeFixedMonth(){const sel=$('fixedMonthSelect');if(sel){fixedMonth=sel.value;renderFixedExpenses();renderFixedSummary();}}function changeDebtMonth(){const sel=$('debtMonthSelect');if(sel){debtMonth=sel.value;renderDebt();}}function changeMonthView(){const sel=$('monthViewSelect');if(sel){monthView=sel.value;renderFinanceMonth();}}
 function cleanupCats(){if(data.customCats&&Object.keys(data.customCats).some(t=>Array.isArray(data.customCats[t])&&data.customCats[t].length)){data.customCats={daily:[],extra:[],income:[]};saveData();}}
 function renderFinCats(){const type=$('finType').value;const all=FIN_CATS[type];$('finCategory').innerHTML=all.map(c=>'<option>'+esc(c)+'</option>').join('')+'<option value="__custom">✏️ 手动输入...</option>';const ci=$('finCustomCat');if(ci)ci.style.display='none';}
 function onFinCatChange(){const sel=$('finCategory');const ci=$('finCustomCat');if(!sel||!ci)return;if(sel.value==='__custom'){ci.style.display='block';ci.value='';ci.focus();}else{ci.style.display='none';}}
